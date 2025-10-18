@@ -1,0 +1,466 @@
+// Golden Errands Delivery Management System - Database Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============ USER MANAGEMENT ============
+
+enum UserRole {
+  ADMIN
+  DISPATCH_MANAGER
+  DRIVER
+  CUSTOMER
+  FINANCE
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+model User {
+  id                String      @id @default(uuid())
+  email             String      @unique
+  password          String
+  firstName         String
+  lastName          String
+  phoneNumber       String?
+  role              UserRole    @default(CUSTOMER)
+  status            UserStatus  @default(ACTIVE)
+  emailVerified     Boolean     @default(false)
+  phoneVerified     Boolean     @default(false)
+  avatar            String?
+  address           String?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  lastLogin         DateTime?
+  
+  // Relations
+  refreshTokens     RefreshToken[]
+  ordersAsCustomer  Order[]        @relation("CustomerOrders")
+  deliveriesAsDriver Delivery[]    @relation("DriverDeliveries")
+  assignedOrders    Order[]        @relation("AssignedOrders")
+  vehicles          Vehicle[]
+  notifications     Notification[]
+  auditLogs         AuditLog[]
+  messages          Message[]
+  payments          Payment[]
+  
+  // Driver-specific fields
+  driverProfile     DriverProfile?
+  
+  @@index([email])
+  @@index([role])
+  @@index([status])
+}
+
+model DriverProfile {
+  id                String    @id @default(uuid())
+  userId            String    @unique
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  licenseNumber     String?
+  licenseExpiry     DateTime?
+  vehicleType       VehicleType?
+  isAvailable       Boolean   @default(true)
+  currentLat        Float?
+  currentLng        Float?
+  lastLocationUpdate DateTime?
+  rating            Float     @default(5.0)
+  totalDeliveries   Int       @default(0)
+  completedDeliveries Int     @default(0)
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  @@index([isAvailable])
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  
+  @@index([userId])
+}
+
+// ============ ORDER & DELIVERY MANAGEMENT ============
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  ASSIGNED
+  PICKED_UP
+  IN_TRANSIT
+  DELIVERED
+  FAILED
+  CANCELLED
+}
+
+enum DeliveryType {
+  FOOD_DELIVERY
+  PARCEL_DELIVERY
+  GROCERY_ERRANDS
+  PHARMACEUTICAL
+  BUS_STATION_PICKUP
+  ONLINE_SHOPS
+  PERSONAL_ERRANDS
+  OTHER
+}
+
+enum PackageSize {
+  SMALL
+  MEDIUM
+  LARGE
+  EXTRA_LARGE
+}
+
+enum PaymentMethod {
+  CASH_ON_DELIVERY
+  ONLINE_CARD
+  MOBILE_MONEY
+  WALLET
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+model Order {
+  id                String         @id @default(uuid())
+  orderNumber       String         @unique @default(cuid())
+  
+  // Customer Information
+  customerId        String
+  customer          User           @relation("CustomerOrders", fields: [customerId], references: [id])
+  
+  // Pickup Details
+  pickupAddress     String
+  pickupLat         Float?
+  pickupLng         Float?
+  pickupContact     String?
+  pickupInstructions String?
+  
+  // Delivery Details
+  deliveryAddress   String
+  deliveryLat       Float?
+  deliveryLng       Float?
+  deliveryContact   String?
+  deliveryInstructions String?
+  recipientName     String?
+  recipientPhone    String?
+  
+  // Order Details
+  deliveryType      DeliveryType   @default(PARCEL_DELIVERY)
+  packageSize       PackageSize    @default(MEDIUM)
+  packageDescription String?
+  itemsList         String?        // JSON stringified array
+  packageValue      Float?
+  weight            Float?         // in kg
+  
+  // Scheduling
+  scheduledPickupTime DateTime?
+  scheduledDeliveryTime DateTime?
+  deliveryTimeWindow String?       // e.g., "9AM-12PM"
+  
+  // Pricing
+  basePrice         Float          @default(0)
+  distancePrice     Float          @default(0)
+  urgencyPrice      Float          @default(0)
+  totalPrice        Float          @default(0)
+  currency          String         @default("GHS")
+  
+  // Payment
+  paymentMethod     PaymentMethod  @default(CASH_ON_DELIVERY)
+  paymentStatus     PaymentStatus  @default(PENDING)
+  
+  // Assignment
+  assignedToId      String?
+  assignedTo        User?          @relation("AssignedOrders", fields: [assignedToId], references: [id])
+  assignedAt        DateTime?
+  
+  // Status & Tracking
+  status            OrderStatus    @default(PENDING)
+  priority          Int            @default(0)
+  estimatedDistance Float?         // in km
+  estimatedDuration Int?           // in minutes
+  
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  completedAt       DateTime?
+  cancelledAt       DateTime?
+  cancellationReason String?
+  
+  // Relations
+  delivery          Delivery?
+  payments          Payment[]
+  trackingHistory   TrackingHistory[]
+  
+  @@index([customerId])
+  @@index([assignedToId])
+  @@index([status])
+  @@index([orderNumber])
+  @@index([createdAt])
+}
+
+model Delivery {
+  id                String         @id @default(uuid())
+  orderId           String         @unique
+  order             Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  driverId          String
+  driver            User           @relation("DriverDeliveries", fields: [driverId], references: [id])
+  
+  vehicleId         String?
+  vehicle           Vehicle?       @relation(fields: [vehicleId], references: [id])
+  
+  // Timestamps
+  acceptedAt        DateTime?
+  pickedUpAt        DateTime?
+  startedAt         DateTime?
+  deliveredAt       DateTime?
+  
+  // Route Information
+  actualDistance    Float?         // in km
+  actualDuration    Int?           // in minutes
+  routePolyline     String?        // Encoded polyline from Google Maps
+  
+  // Proof of Delivery
+  podType           String?        // SIGNATURE, PHOTO, QR_CODE, PIN
+  podSignatureUrl   String?
+  podPhotoUrl       String?
+  podNotes          String?
+  podRecipientName  String?
+  podTimestamp      DateTime?
+  
+  // Ratings & Feedback
+  customerRating    Int?           // 1-5
+  customerFeedback  String?
+  driverRating      Int?           // 1-5
+  driverFeedback    String?
+  
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  
+  @@index([driverId])
+  @@index([orderId])
+}
+
+model TrackingHistory {
+  id          String   @id @default(uuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  status      String
+  location    String?
+  lat         Float?
+  lng         Float?
+  notes       String?
+  timestamp   DateTime @default(now())
+  
+  @@index([orderId])
+  @@index([timestamp])
+}
+
+// ============ VEHICLE MANAGEMENT ============
+
+enum VehicleType {
+  MOTORCYCLE
+  BICYCLE
+  CAR
+  VAN
+  TRUCK
+}
+
+enum VehicleStatus {
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+}
+
+model Vehicle {
+  id              String        @id @default(uuid())
+  driverId        String
+  driver          User          @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  
+  vehicleType     VehicleType
+  make            String?
+  model           String?
+  year            Int?
+  licensePlate    String        @unique
+  color           String?
+  capacity        Float?        // max weight in kg
+  
+  status          VehicleStatus @default(ACTIVE)
+  
+  insuranceExpiry DateTime?
+  lastMaintenance DateTime?
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  deliveries      Delivery[]
+  
+  @@index([driverId])
+  @@index([status])
+}
+
+// ============ PAYMENT & INVOICING ============
+
+model Payment {
+  id              String        @id @default(uuid())
+  orderId         String
+  order           Order         @relation(fields: [orderId], references: [id])
+  
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  
+  amount          Float
+  currency        String        @default("GHS")
+  paymentMethod   PaymentMethod
+  paymentStatus   PaymentStatus @default(PENDING)
+  
+  // Payment Gateway
+  gatewayProvider String?       // PAYSTACK, STRIPE, CASH
+  gatewayReference String?
+  gatewayResponse String?       // JSON response
+  
+  // Commission & Settlement
+  platformFee     Float         @default(0)
+  driverPayout    Float         @default(0)
+  netAmount       Float         @default(0)
+  
+  // Invoice
+  invoiceNumber   String?       @unique
+  invoiceUrl      String?
+  receiptUrl      String?
+  
+  paidAt          DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  @@index([orderId])
+  @@index([userId])
+  @@index([paymentStatus])
+}
+
+// ============ ZONES & PRICING ============
+
+model DeliveryZone {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  
+  // Geographic bounds (polygon)
+  boundaryData String? // JSON array of lat/lng coordinates
+  
+  // Pricing
+  basePrice   Float    @default(0)
+  pricePerKm  Float    @default(0)
+  active      Boolean  @default(true)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ============ NOTIFICATIONS & MESSAGING ============
+
+enum NotificationType {
+  ORDER_CREATED
+  ORDER_ASSIGNED
+  ORDER_PICKED_UP
+  ORDER_DELIVERED
+  PAYMENT_RECEIVED
+  DRIVER_NEARBY
+  DELIVERY_DELAYED
+  SYSTEM_ALERT
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  type      NotificationType
+  title     String
+  message   String
+  data      String?          // JSON additional data
+  
+  read      Boolean          @default(false)
+  readAt    DateTime?
+  
+  createdAt DateTime         @default(now())
+  
+  @@index([userId])
+  @@index([read])
+}
+
+model Message {
+  id          String   @id @default(uuid())
+  fromUserId  String
+  fromUser    User     @relation(fields: [fromUserId], references: [id])
+  
+  toUserId    String?
+  orderId     String?
+  
+  content     String
+  attachments String?  // JSON array of URLs
+  
+  read        Boolean  @default(false)
+  readAt      DateTime?
+  
+  createdAt   DateTime @default(now())
+  
+  @@index([fromUserId])
+  @@index([toUserId])
+  @@index([orderId])
+}
+
+// ============ AUDIT & SECURITY ============
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  action      String
+  entity      String
+  entityId    String?
+  changes     String?  // JSON of changes
+  ipAddress   String?
+  userAgent   String?
+  
+  createdAt   DateTime @default(now())
+  
+  @@index([userId])
+  @@index([entity])
+  @@index([createdAt])
+}
+
+// ============ SYSTEM CONFIGURATION ============
+
+model SystemSetting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     String
+  category  String
+  description String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([category])
+}
