@@ -1,40 +1,48 @@
-# 🚨 Railway Deployment Fix
+## 🚨 Railway Deployment Fix - UPDATED
 
 ## The Issue
-Railway tried to build from the root directory, but this is a **monorepo** with separate `backend` and `frontend` services.
+Railway's nixpacks.toml files had syntax errors causing build failures.
 
-## ✅ Solution: Deploy Each Service Separately
+## ✅ Solution: Simplified Monorepo Setup
 
-### Step 1: Deploy Backend Service
+I've completely reorganized the deployment structure:
 
-1. **Via Railway Dashboard:**
-   - Go to your Railway project
-   - Click **"+ New Service"**
-   - Select **"GitHub Repo"** 
-   - Choose your repository
-   - **IMPORTANT**: Set **Root Directory** to `backend`
-   - Click Deploy
+### ✅ What's Fixed:
+1. **Removed problematic nixpacks.toml files** 
+2. **Created root package.json** with proper build scripts
+3. **Updated railway.json** with correct build commands
+4. **Simplified deployment process**
 
-2. **Via Railway CLI:**
-   ```bash
-   cd backend
-   railway up
-   ```
+## 🚀 New Deployment Options
 
-### Step 2: Deploy Frontend Service
+### Option 1: Single Service Deployment (Recommended)
+
+**Deploy the entire project as one service:**
 
 1. **Via Railway Dashboard:**
-   - In the same project, click **"+ New Service"** again
-   - Select **"GitHub Repo"**
-   - Choose your repository again
-   - **IMPORTANT**: Set **Root Directory** to `frontend`
+   - Go to Railway → New Project → Deploy from GitHub
+   - Select your repository 
+   - Railway will now detect the root `package.json`
+   - It will automatically build the backend
    - Click Deploy
 
-2. **Via Railway CLI:**
-   ```bash
-   cd frontend
-   railway up
-   ```
+2. **Custom Commands (if needed):**
+   - **Build Command**: `npm run build`
+   - **Start Command**: `npm start`
+
+### Option 2: Separate Services (Advanced)
+
+If you still want separate services:
+
+1. **Backend Service:**
+   - Root Directory: `backend`
+   - Build Command: `npx prisma generate && npm run build` 
+   - Start Command: `npx prisma migrate deploy && npm start`
+
+2. **Frontend Service:**
+   - Root Directory: `frontend`
+   - Build Command: `npm run build`
+   - Start Command: `npm run preview`
 
 ### Step 3: Add Database Service
 
