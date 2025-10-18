@@ -33,7 +33,34 @@ Ensure all the Railway configuration files are in place:
 2. Click **"New Project"**
 3. Select **"Deploy from GitHub repo"**
 4. Choose your Golden Errands repository
-5. Railway will detect multiple services and ask you to select which to deploy
+
+**IMPORTANT**: Railway will detect this as a monorepo. You need to deploy each service separately:
+
+#### Option 1: Deploy via Railway Dashboard (Recommended)
+1. After connecting the repo, Railway will show "No services deployed"
+2. Click **"+ New Service"** 
+3. Select **"GitHub Repo"**
+4. Choose your repository again
+5. Set the **Root Directory** to either:
+   - `backend` (for the API service)
+   - `frontend` (for the web app)
+
+#### Option 2: Deploy via Railway CLI
+```bash
+# Install Railway CLI
+npm install -g @railway/cli
+
+# Login to Railway
+railway login
+
+# Deploy backend
+cd backend
+railway up
+
+# Deploy frontend (in new terminal)
+cd frontend
+railway up
+```
 
 ### 3. Set Up Database Service
 
@@ -45,8 +72,9 @@ Ensure all the Railway configuration files are in place:
 ### 4. Configure Backend Service
 
 1. **Deploy Backend:**
-   - Select the `backend` folder as your service root
-   - Railway will use the `nixpacks.toml` configuration
+   - **Method 1 (Dashboard)**: Create new service → GitHub Repo → Set Root Directory to `backend`
+   - **Method 2 (CLI)**: Run `railway up` from the `backend` directory
+   - Railway will use the `backend/nixpacks.toml` configuration
 
 2. **Set Environment Variables:**
    ```bash
@@ -86,8 +114,9 @@ Ensure all the Railway configuration files are in place:
 ### 5. Configure Frontend Service
 
 1. **Deploy Frontend:**
-   - Select the `frontend` folder as your service root
-   - Railway will use the `nixpacks.toml` configuration
+   - **Method 1 (Dashboard)**: Create new service → GitHub Repo → Set Root Directory to `frontend`
+   - **Method 2 (CLI)**: Run `railway up` from the `frontend` directory
+   - Railway will use the `frontend/nixpacks.toml` configuration
 
 2. **Set Environment Variables:**
    ```bash
