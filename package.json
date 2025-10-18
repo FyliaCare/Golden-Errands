@@ -8,6 +8,7 @@
     "npm": ">=9.0.0"
   },
   "scripts": {
+    "setup": "powershell -ExecutionPolicy Bypass -File setup-dev.ps1",
     "install:backend": "cd backend && npm install",
     "install:frontend": "cd frontend && npm install", 
     "install:all": "npm run install:backend && npm run install:frontend",
@@ -19,6 +20,7 @@
     "start": "npm run start:backend",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
+    "dev": "npm run dev:backend",
     "postinstall": "npm run install:backend"
   },
   "keywords": [
