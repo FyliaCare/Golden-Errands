@@ -3,7 +3,7 @@ import { validationResult } from 'express-validator';
 import prisma from '../config/database';
 import { AuthRequest } from '../middleware/auth';
 import logger from '../utils/logger';
-import { OrderStatus } from '../types/enums';
+import { OrderStatus } from '@prisma/client';
 
 export class OrderController {
   // Create new order

@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "npm run prisma:generate && tsc",
-    "build:railway": "cp prisma/schema.prod.prisma prisma/schema.prisma && npm run prisma:generate && tsc",
+    "build:production": "npm run prisma:generate && tsc",
     "start": "node dist/server.js",
     "postinstall": "npm run prisma:generate",
     "railway:start": "npm run setup-db && npm start",
