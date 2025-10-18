@@ -5,10 +5,11 @@
   "private": true,
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsc && npm run prisma:generate",
+    "build": "npm run prisma:generate && tsc",
+    "build:railway": "cp prisma/schema.prod.prisma prisma/schema.prisma && npm run prisma:generate && tsc",
     "start": "node dist/server.js",
     "postinstall": "npm run prisma:generate",
-    "railway:start": "npx prisma migrate deploy && npm start",
+    "railway:start": "npm run setup-db && npm start",
     "setup-db": "npx prisma migrate deploy",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
