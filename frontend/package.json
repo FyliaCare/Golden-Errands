@@ -2,16 +2,10 @@
   "name": "dms-frontend",
   "version": "0.1.0",
   "private": true,
-  "engines": {
-    "node": ">=18.19.0",
-    "npm": ">=9.0.0"
-  },
   "scripts": {
     "dev": "vite",
-    "build": "webpack --mode production",
-    "build:vite": "vite build",
-    "preview": "vite preview",
-    "start": "npm run preview"
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
