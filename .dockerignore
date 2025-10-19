@@ -1,0 +1,31 @@
+# Prevent Railway from using frontend Dockerfile
+frontend/
+
+# Also ignore other non-backend files
+*.md
+.git/
+.vscode/
+.idea/
+
+# Node modules (will be installed)
+node_modules/
+*/node_modules/
+
+# Environment files
+.env.local
+.env.development
+
+# Build outputs (will be rebuilt)
+dist/
+build/
+*/dist/
+*/build/
+
+# Logs
+logs/
+*.log
+
+# Uploads and temp
+uploads/
+temp/
+tmp/
