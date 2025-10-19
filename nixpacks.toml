@@ -4,6 +4,7 @@ node = "18.x"
 [variables]
 NODE_ENV = "production"
 NPM_CONFIG_PRODUCTION = "false"
+DATABASE_URL = "postgresql://placeholder:placeholder@placeholder:5432/placeholder"
 
 [phases.setup]
 nixPkgs = ["nodejs_18", "npm-9_x", "openssl", "pkg-config"]
@@ -18,7 +19,6 @@ cmds = [
 [phases.build] 
 dependsOn = ["install"]
 cmds = [
-    "npx prisma generate --schema=backend/prisma/schema.prisma",
     "npm run build --prefix backend"
 ]
 
