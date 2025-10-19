@@ -46,7 +46,9 @@ try {
     });
     console.log('✅ Migrations completed\n');
   } catch (migrateError) {
-    console.warn('⚠️  Migration warning (may be expected if no migrations):', migrateError.message);
+    // Don't fail - migrations might not be needed or DB might not be ready yet
+    console.warn('⚠️  Migration info:', migrateError.message);
+    console.warn('Continuing without migrations - server will still start\n');
   }
 
   // Step 3: Start the server
