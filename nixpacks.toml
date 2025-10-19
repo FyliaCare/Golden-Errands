@@ -1,22 +1,23 @@
+[providers]
+node = "18.x"
+
+[variables]
+NODE_ENV = "production"
+NPM_CONFIG_PRODUCTION = "false"
+
 [phases.setup]
-nixPkgs = ['nodejs-18_x', 'npm-9_x', 'openssl']
+nixPkgs = ["nodejs_18", "npm-9_x", "openssl", "pkg-config"]
 
 [phases.install]
 cmds = [
-  'cd backend',
-  'npm ci'
+    "npm ci --prefix backend"
 ]
 
-[phases.build]
+[phases.build] 
 cmds = [
-  'cd backend',
-  'npx prisma generate',
-  'npm run build'
+    "cd backend && npx prisma generate",
+    "cd backend && npm run build"
 ]
 
 [start]
-cmd = 'cd backend && npm start'
-
-[variables]
-NODE_ENV = 'production'
-OPENSSL_CONF = '/dev/null'
+cmd = "cd backend && node dist/server.js"
