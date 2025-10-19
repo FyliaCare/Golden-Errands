@@ -82,15 +82,16 @@ app.use((req: Request, res: Response) => {
 // Error handler
 app.use(errorHandler);
 
-// Start server
-const PORT = config.port;
+// Start server (only if not in serverless environment)
+if (process.env.VERCEL !== '1') {
+  const PORT = config.port;
 
-app.listen(PORT, () => {
-  logger.info(`🚀 Golden Errands API Server running on port ${PORT}`);
-  logger.info(`📦 Environment: ${config.env}`);
-  logger.info(`🌐 CORS Origin: ${config.cors.origin}`);
-  logger.info(`📍 Access the API at: http://localhost:${PORT}`);
-  console.log(`
+  app.listen(PORT, () => {
+    logger.info(`🚀 Golden Errands API Server running on port ${PORT}`);
+    logger.info(`📦 Environment: ${config.env}`);
+    logger.info(`🌐 CORS Origin: ${config.cors.origin}`);
+    logger.info(`📍 Access the API at: http://localhost:${PORT}`);
+    console.log(`
   ╔══════════════════════════════════════════════╗
   ║                                              ║
   ║         GOLDEN ERRANDS                       ║
@@ -101,6 +102,7 @@ app.listen(PORT, () => {
   ║                                              ║
   ╚══════════════════════════════════════════════╝
   `);
-});
+  });
+}
 
 export default app;
