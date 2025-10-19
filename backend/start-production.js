@@ -7,6 +7,7 @@
 
 const { execSync } = require('child_process');
 const path = require('path');
+const fs = require('fs');
 
 console.log('🚀 Golden Errands API - Production Startup\n');
 
@@ -17,12 +18,21 @@ if (!process.env.DATABASE_URL) {
   process.exit(1);
 }
 
+// Determine if we're in Docker (paths are different)
+const isDocker = fs.existsSync('/app/dist');
+const workDir = isDocker ? '/app' : __dirname;
+const serverPath = isDocker ? '/app/dist/server.js' : path.join(__dirname, 'dist', 'server.js');
+
+console.log(`📂 Working directory: ${workDir}`);
+console.log(`🎯 Server path: ${serverPath}\n`);
+
 try {
   // Step 1: Generate Prisma Client with production DATABASE_URL
   console.log('📦 Generating Prisma Client...');
   execSync('npx prisma generate', { 
     stdio: 'inherit',
-    env: process.env
+    env: process.env,
+    cwd: workDir
   });
   console.log('✅ Prisma Client generated\n');
 
@@ -31,7 +41,8 @@ try {
   try {
     execSync('npx prisma migrate deploy', { 
       stdio: 'inherit',
-      env: process.env
+      env: process.env,
+      cwd: workDir
     });
     console.log('✅ Migrations completed\n');
   } catch (migrateError) {
@@ -40,7 +51,13 @@ try {
 
   // Step 3: Start the server
   console.log('🌟 Starting server...\n');
-  require('./dist/server.js');
+  
+  // Verify server file exists
+  if (!fs.existsSync(serverPath)) {
+    throw new Error(`Server file not found at: ${serverPath}`);
+  }
+  
+  require(serverPath);
 
 } catch (error) {
   console.error('❌ Startup failed:', error.message);

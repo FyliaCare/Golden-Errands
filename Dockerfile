@@ -32,6 +32,9 @@ RUN npm ci --only=production
 # Copy Prisma schema (needed for runtime generation)
 COPY backend/prisma ./prisma/
 
+# Copy startup script
+COPY backend/start-production.js ./start-production.js
+
 # Copy built application from builder
 COPY --from=builder /app/backend/dist ./dist
 
