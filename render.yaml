@@ -10,9 +10,10 @@ services:
     plan: free
     branch: main
     rootDir: backend
-    buildCommand: npm ci && npm run build && npx prisma generate
+    buildCommand: bash build.sh
     startCommand: npm start
     healthCheckPath: /health
+    numInstances: 1
     envVars:
       - key: NODE_ENV
         value: production
@@ -39,7 +40,7 @@ services:
     plan: free
     branch: main
     rootDir: frontend
-    buildCommand: npm ci && npm run build:vite
+    buildCommand: bash build.sh
     staticPublishPath: dist
     routes:
       - type: rewrite

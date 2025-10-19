@@ -3,6 +3,10 @@
   "version": "2.0.0",
   "description": "Golden Errands Delivery Management System - Backend API",
   "private": true,
+  "engines": {
+    "node": ">=18.19.0",
+    "npm": ">=9.0.0"
+  },
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
