@@ -1,27 +1,21 @@
-[providers]
-node = "18.x"
+providers = ["node"]
 
 [variables]
 NODE_ENV = "production"
 NPM_CONFIG_PRODUCTION = "false"
-DATABASE_URL = "postgresql://placeholder:placeholder@placeholder:5432/placeholder"
 
 [phases.setup]
 nixPkgs = ["nodejs_18", "npm-9_x", "openssl", "pkg-config"]
-aptPkgs = []
 
 [phases.install]
-dependsOn = ["setup"]
 cmds = [
     "cd backend && npm ci"
 ]
 
-[phases.build] 
-dependsOn = ["install"]
+[phases.build]
 cmds = [
     "cd backend && npm run build"
 ]
 
 [start]
-runImage = "ghcr.io/railwayapp/nixpacks:ubuntu-1698004610"
 cmd = "cd backend && npm start"
