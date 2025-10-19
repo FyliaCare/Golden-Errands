@@ -1,6 +1,7 @@
 {
   "version": 2,
-  "buildCommand": "bash build.sh",
+  "buildCommand": "node build-vercel.js",
+  "outputDirectory": "backend/dist",
   "builds": [
     {
       "src": "api/index.js",
