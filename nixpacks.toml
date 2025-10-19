@@ -1,21 +1,19 @@
+# Golden Errands Backend - Nixpacks Configuration
+# Forces Railway to use Nixpacks (not Docker)
+
 providers = ["node"]
 
 [variables]
 NODE_ENV = "production"
-NPM_CONFIG_PRODUCTION = "false"
 
 [phases.setup]
-nixPkgs = ["nodejs_18", "npm-9_x", "openssl", "pkg-config"]
+nixPkgs = ["nodejs_18"]
 
 [phases.install]
-cmds = [
-    "cd backend && npm ci"
-]
+cmds = ["cd backend && npm install"]
 
 [phases.build]
-cmds = [
-    "cd backend && npm run build"
-]
+cmds = ["cd backend && npm run build"]
 
 [start]
 cmd = "cd backend && npm start"
