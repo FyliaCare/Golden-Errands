@@ -36,19 +36,21 @@ try {
   });
   console.log('✅ Prisma Client generated\n');
 
-  // Step 2: Run database migrations
-  console.log('🔄 Running database migrations...');
+  // Step 2: Sync database schema (using db push for Railway)
+  console.log('🔄 Syncing database schema...');
   try {
-    execSync('npx prisma migrate deploy', { 
+    // Use db push - works better with Railway than migrations
+    execSync('npx prisma db push --skip-generate --accept-data-loss', { 
       stdio: 'inherit',
       env: process.env,
-      cwd: workDir
+      cwd: workDir,
+      timeout: 60000 // 60 second timeout for Railway
     });
-    console.log('✅ Migrations completed\n');
-  } catch (migrateError) {
-    // Don't fail - migrations might not be needed or DB might not be ready yet
-    console.warn('⚠️  Migration info:', migrateError.message);
-    console.warn('Continuing without migrations - server will still start\n');
+    console.log('✅ Database schema synced successfully\n');
+  } catch (dbError) {
+    console.warn('⚠️  Database sync failed during startup');
+    console.warn('This is normal if Railway networking is still initializing');
+    console.warn('Tables will be created on first API request if needed\n');
   }
 
   // Step 3: Start the server

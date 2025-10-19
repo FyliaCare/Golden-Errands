@@ -12,6 +12,9 @@ import logger from './utils/logger';
 
 const app: Application = express();
 
+// Trust proxy for Railway/production environments
+app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet());
 app.use(cors({
