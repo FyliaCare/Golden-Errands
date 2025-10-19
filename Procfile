@@ -1,1 +1,1 @@
-web: node start.js
+web: npx prisma migrate deploy --schema=backend/prisma/schema.prisma && node backend/dist/server.js

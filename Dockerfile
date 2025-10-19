@@ -4,17 +4,18 @@ FROM node:18-alpine AS base
 # Install required system dependencies
 RUN apk add --no-cache openssl
 
-# Set working directory to backend
-WORKDIR /app/backend
+# Set working directory to app root
+WORKDIR /app
 
 # Stage 1: Dependencies and Build
 FROM base AS builder
 
-# Copy package files
-COPY backend/package*.json ./
-COPY backend/prisma ./prisma/
+# Copy backend package files
+COPY backend/package*.json ./backend/
+COPY backend/prisma ./backend/prisma/
 
 # Install all dependencies (including dev dependencies for build)
+WORKDIR /app/backend
 RUN npm ci
 
 # Copy source code
@@ -28,10 +29,11 @@ RUN npm run build
 # Stage 2: Production Runtime
 FROM base AS runtime
 
-# Copy package files for production install
-COPY backend/package*.json ./
+# Copy backend package files for production install
+COPY backend/package*.json ./backend/
 
 # Install only production dependencies
+WORKDIR /app/backend
 RUN npm ci --only=production && npm cache clean --force
 
 # Copy built application from builder stage
@@ -54,5 +56,5 @@ EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node --version || exit 1
 
-# Start the application (no cd needed, already in backend directory)
-CMD ["node", "dist/server.js"]
+# Start with migration and then server
+CMD sh -c "npx prisma migrate deploy && node dist/server.js"

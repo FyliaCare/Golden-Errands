@@ -20,4 +20,4 @@ cmds = [
 ]
 
 [start]
-cmd = "node start.js"
+cmd = "npx prisma migrate deploy --schema=backend/prisma/schema.prisma && node backend/dist/server.js"
