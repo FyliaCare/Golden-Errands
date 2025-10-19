@@ -68,17 +68,41 @@ Visit http://localhost:5173 for the frontend and http://localhost:3001 for the A
 ### Option 1: Railway (Backend) + Netlify (Frontend Dev Server)
 **Recommended for immediate deployment**
 
-#### Railway Backend Setup:
-1. Connect GitHub repo to Railway
-2. Set root directory to `backend/`
-3. Add environment variables:
-   ```
-   DATABASE_URL=(Railway provides PostgreSQL automatically)
-   JWT_SECRET=your-secure-jwt-secret-key
-   NODE_ENV=production
-   PORT=3001
-   ```
-4. Deploy automatically triggers on push
+### Railway Backend Deployment (Fixed)
+
+**Current Issue Resolution:**
+The build errors you're seeing are due to Railway trying to build the entire monorepo. Here's the fix:
+
+#### Step 1: Railway Service Configuration
+1. In Railway dashboard, go to your service settings
+2. Set **Root Directory** to: `backend`
+3. Set **Build Command** to: `npm ci && npm run build`
+4. Set **Start Command** to: `npm start`
+
+#### Step 2: Environment Variables
+Add these in Railway dashboard:
+```
+DATABASE_URL=(Railway will auto-generate this)
+JWT_SECRET=your-super-secure-jwt-secret-key
+NODE_ENV=production
+PORT=3001
+```
+
+#### Step 3: Alternative - Use Railway CLI
+```bash
+# Install Railway CLI
+npm install -g @railway/cli
+
+# Login and deploy
+railway login
+railway link [your-project-id]
+railway up --service backend
+```
+
+#### Step 4: Verify Deployment
+- Railway will automatically create PostgreSQL database
+- Check logs for successful Prisma migrations
+- Test endpoint: `https://your-app.railway.app/api/health`
 
 #### Netlify Frontend Setup:
 1. Deploy using development server approach

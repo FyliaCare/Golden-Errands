@@ -1,0 +1,10 @@
+frontend/
+node_modules/
+.git/
+*.md
+.env.local
+.env.development
+dist/
+coverage/
+.nyc_output/
+*.log
