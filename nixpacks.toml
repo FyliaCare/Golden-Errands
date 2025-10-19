@@ -7,17 +7,21 @@ NPM_CONFIG_PRODUCTION = "false"
 
 [phases.setup]
 nixPkgs = ["nodejs_18", "npm-9_x", "openssl", "pkg-config"]
+aptPkgs = []
 
 [phases.install]
+dependsOn = ["setup"]
 cmds = [
     "npm ci --prefix backend"
 ]
 
 [phases.build] 
+dependsOn = ["install"]
 cmds = [
     "npx prisma generate --schema=backend/prisma/schema.prisma",
     "npm run build --prefix backend"
 ]
 
 [start]
-cmd = "npm run start --prefix backend"
+runImage = "ghcr.io/railwayapp/nixpacks:ubuntu-1698004610"
+cmd = "npm start"
