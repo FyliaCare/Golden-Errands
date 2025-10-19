@@ -5,15 +5,15 @@ services:
   # Backend API Service
   - type: web
     name: golden-errands-api
-    runtime: node
+    env: node
     region: oregon
     plan: free
     branch: main
     rootDir: backend
-    buildCommand: bash build.sh
+    buildCommand: npm ci && npm run build && npx prisma generate
     startCommand: npm start
     healthCheckPath: /health
-    numInstances: 1
+    autoDeploy: true
     envVars:
       - key: NODE_ENV
         value: production
@@ -35,13 +35,14 @@ services:
   # Frontend Static Site
   - type: web
     name: golden-errands-frontend
-    runtime: static
+    env: static
     region: oregon
     plan: free
     branch: main
     rootDir: frontend
-    buildCommand: bash build.sh
+    buildCommand: npm ci && npm run build:vite
     staticPublishPath: dist
+    pullRequestPreviewsEnabled: false
     routes:
       - type: rewrite
         source: /*
