@@ -1,89 +1,175 @@
-# Golden Errands - Delivery Management Platform
+# Golden Errands - Delivery Management Platform# Golden Errands - Delivery Management Platform
 
-A complete delivery management system with real-time tracking, order management, and driver coordination.
 
-## 🚀 Tech Stack
 
-**Backend:**
-- Node.js 18+ with TypeScript
-- Express.js REST API
+Professional delivery management system with real-time tracking and order management.A complete delivery management system with real-time tracking, order management, and driver coordination.
+
+
+
+## 🚀 Tech Stack## 🚀 Tech Stack
+
+
+
+**Backend:** Node.js 18+, TypeScript, Express, Prisma ORM, PostgreSQL  **Backend:**
+
+**Frontend:** React, Vite, Google Maps  - Node.js 18+ with TypeScript
+
+**Auth:** JWT with bcrypt- Express.js REST API
+
 - Prisma ORM with PostgreSQL
-- JWT Authentication
+
+## 📦 Quick Start- JWT Authentication
+
 - Real-time tracking
 
+### Backend
+
 **Frontend:**
-- React with Vite
-- Google Maps integration
-- Document generation
 
-## 📦 Quick Start
+```bash- React with Vite
 
-### Backend Development
+cd backend- Google Maps integration
 
-```bash
-cd backend
-npm install
+npm install- Document generation
+
 cp .env.example .env
-# Edit .env with your database credentials
 
-npx prisma migrate dev
+# Edit .env with DATABASE_URL and JWT_SECRET## 📦 Quick Start
+
+
+
+npx prisma migrate dev### Backend Development
+
 npm run dev
-```
 
-### Frontend Development
+``````bash
 
-```bash
+cd backend
+
+### Frontendnpm install
+
+cp .env.example .env
+
+```bash# Edit .env with your database credentials
+
 cd frontend
-npm install
-npm run dev
-```
 
-## 🚀 Deploy to Vercel
+npm installnpx prisma migrate dev
 
-### 1. Prerequisites
+npm run devnpm run dev
+
+``````
+
+
+
+## 🔐 Required Environment Variables### Frontend Development
+
+
+
+**Backend (.env):**```bash
+
+- `DATABASE_URL` - PostgreSQL connection stringcd frontend
+
+- `JWT_SECRET` - JWT secret keynpm install
+
+- `NODE_ENV` - development/productionnpm run dev
+
+- `PORT` - Server port (default: 4000)```
+
+
+
+See `backend/.env.example` for all options.## 🚀 Deploy to Vercel
+
+
+
+## 📡 API Endpoints### 1. Prerequisites
+
 - GitHub repository
-- Vercel account
-- PostgreSQL database (Vercel Postgres, Neon, or Supabase)
 
-### 2. Deploy
+- **Auth:** `/api/auth/register`, `/api/auth/login`, `/api/auth/logout`- Vercel account
+
+- **Orders:** `/api/orders` (GET, POST, PATCH, DELETE)- PostgreSQL database (Vercel Postgres, Neon, or Supabase)
+
+- **Drivers:** `/api/drivers/available`, `/api/drivers/location`
+
+- **Health:** `/health`### 2. Deploy
+
 1. Go to [vercel.com](https://vercel.com) → New Project
-2. Import: `FyliaCare/Golden-Errands`
+
+## 🚀 Deployment2. Import: `FyliaCare/Golden-Errands`
+
 3. Configure:
-   - Root Directory: `backend`
+
+Standard Node.js/Express + React application. Works with:   - Root Directory: `backend`
+
    - Build Command: `npm run vercel-build`
-   - Output Directory: `dist`
-4. Add Environment Variables:
-   - `DATABASE_URL` - Your PostgreSQL connection string
+
+- **Vercel, Railway, Render, Heroku** - Cloud platforms   - Output Directory: `dist`
+
+- **DigitalOcean, AWS, GCP, Azure** - VPS/Container services4. Add Environment Variables:
+
+- **Any platform supporting Node.js 18+**   - `DATABASE_URL` - Your PostgreSQL connection string
+
    - `JWT_SECRET` - Your secure secret key
-5. Deploy!
 
-See [VERCEL_DEPLOY.md](VERCEL_DEPLOY.md) for detailed instructions.
+### Requirements:5. Deploy!
 
-## API Endpoints
+1. PostgreSQL database
 
-### Authentication
-- `POST /api/auth/register` - Register new user
+2. Set environment variablesSee [VERCEL_DEPLOY.md](VERCEL_DEPLOY.md) for detailed instructions.
+
+3. Run `npm install && npm run build`
+
+4. Start with `npm start`## API Endpoints
+
+
+
+### Database Providers:### Authentication
+
+Use any PostgreSQL service (Neon, Supabase, Railway Postgres, etc.)- `POST /api/auth/register` - Register new user
+
 - `POST /api/auth/login` - Login user
-- `POST /api/auth/refresh` - Refresh access token
+
+## 📝 Scripts- `POST /api/auth/refresh` - Refresh access token
+
 - `POST /api/auth/logout` - Logout user
 
-### Orders
-- `POST /api/orders` - Create new order
-- `GET /api/orders` - Get user's orders
-- `GET /api/orders/:id` - Get order details
+**Backend:**
+
+- `npm run dev` - Development### Orders
+
+- `npm run build` - Build TypeScript- `POST /api/orders` - Create new order
+
+- `npm start` - Start server- `GET /api/orders` - Get user's orders
+
+- `npx prisma migrate deploy` - Deploy migrations- `GET /api/orders/:id` - Get order details
+
 - `PATCH /api/orders/:id` - Update order
-- `DELETE /api/orders/:id` - Cancel order
 
-### Drivers
+**Frontend:**- `DELETE /api/orders/:id` - Cancel order
+
+- `npm run dev` - Vite dev server
+
+- `npm run build` - Production build### Drivers
+
 - `GET /api/drivers/available` - Get available drivers
-- `GET /api/drivers/profile` - Get driver profile
-- `PATCH /api/drivers/location` - Update driver location
 
-## License
+## 📄 License- `GET /api/drivers/profile` - Get driver profile
+
+- `PATCH /api/drivers/location` - Update driver location
 
 Proprietary - FyliaCare
 
-## Contact
+## License
+
+## 📧 Contact
+
+Proprietary - FyliaCare
+
+Email: info@goldenerrands.com  
+
+Phone: 0256039212## Contact
+
 
 Email: info@goldenerrands.com  
 Phone: 0256039212
