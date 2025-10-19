@@ -1,0 +1,13 @@
+{
+  "name": "golden-errands",
+  "version": "1.0.0",
+  "description": "Golden Errands Delivery Platform API",
+  "private": true,
+  "scripts": {
+    "build": "node build-vercel.js",
+    "vercel-build": "node build-vercel.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
