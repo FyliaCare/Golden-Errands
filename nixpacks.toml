@@ -15,9 +15,9 @@ cmds = [
 
 [phases.build] 
 cmds = [
-    "cd backend && npx prisma generate",
-    "cd backend && npm run build"
+    "npx prisma generate --schema=backend/prisma/schema.prisma",
+    "npm run build --prefix backend"
 ]
 
 [start]
-cmd = "cd backend && node dist/server.js"
+cmd = "node start.js"

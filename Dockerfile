@@ -4,8 +4,8 @@ FROM node:18-alpine AS base
 # Install required system dependencies
 RUN apk add --no-cache openssl
 
-# Set working directory
-WORKDIR /app
+# Set working directory to backend
+WORKDIR /app/backend
 
 # Stage 1: Dependencies and Build
 FROM base AS builder
@@ -35,9 +35,9 @@ COPY backend/package*.json ./
 RUN npm ci --only=production && npm cache clean --force
 
 # Copy built application from builder stage
-COPY --from=builder /app/dist ./dist/
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma/
-COPY --from=builder /app/prisma ./prisma/
+COPY --from=builder /app/backend/dist ./dist/
+COPY --from=builder /app/backend/node_modules/.prisma ./node_modules/.prisma/
+COPY --from=builder /app/backend/prisma ./prisma/
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs
@@ -54,5 +54,5 @@ EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node --version || exit 1
 
-# Start the application
+# Start the application (no cd needed, already in backend directory)
 CMD ["node", "dist/server.js"]
