@@ -1,5 +1,0 @@
-[build]
-nixpacksConfigPath = "nixpacks.toml"
-
-[deploy]
-workingDirectory = "backend"

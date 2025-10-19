@@ -1,4 +1,94 @@
-# Golden Errands - Delivery Platform
+# Golden Errands - Delivery Management Platform
+
+A complete delivery management system with real-time tracking, order management, and driver coordination.
+
+## Tech Stack
+
+**Backend:**
+- Node.js 18.x with TypeScript
+- Express.js for REST API
+- Prisma ORM with PostgreSQL
+- JWT authentication with bcrypt
+- Real-time tracking capabilities
+
+**Frontend:**
+- React with Vite
+- Google Maps integration
+- Document generation (invoices, receipts, quotations)
+
+## Quick Start
+
+### Backend Development
+
+```bash
+cd backend
+npm install
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your database credentials
+
+# Run migrations
+npx prisma migrate dev
+
+# Start development server
+npm run dev
+```
+
+### Frontend Development
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+## Railway Deployment
+
+### Prerequisites
+1. PostgreSQL addon in Railway
+2. Environment variable: `JWT_SECRET` (generate a secure random string)
+
+### Deploy
+1. Connect Railway to your GitHub repository
+2. Railway auto-detects Nixpacks configuration
+3. Add PostgreSQL addon
+4. Set `JWT_SECRET` in environment variables
+5. Deploy!
+
+### Environment Variables Required
+- `DATABASE_URL` - Auto-provided by Railway PostgreSQL addon
+- `JWT_SECRET` - Your secure JWT secret key
+- `NODE_ENV` - Auto-set to "production"
+
+## API Endpoints
+
+### Authentication
+- `POST /api/auth/register` - Register new user
+- `POST /api/auth/login` - Login user
+- `POST /api/auth/refresh` - Refresh access token
+- `POST /api/auth/logout` - Logout user
+
+### Orders
+- `POST /api/orders` - Create new order
+- `GET /api/orders` - Get user's orders
+- `GET /api/orders/:id` - Get order details
+- `PATCH /api/orders/:id` - Update order
+- `DELETE /api/orders/:id` - Cancel order
+
+### Drivers
+- `GET /api/drivers/available` - Get available drivers
+- `GET /api/drivers/profile` - Get driver profile
+- `PATCH /api/drivers/location` - Update driver location
+
+## License
+
+Proprietary - FyliaCare
+
+## Contact
+
+Email: info@goldenerrands.com  
+Phone: 0256039212
 
 A modern delivery and logistics platform built with Node.js, React, and PostgreSQL.
 

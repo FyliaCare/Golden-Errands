@@ -13,15 +13,15 @@ aptPkgs = []
 [phases.install]
 dependsOn = ["setup"]
 cmds = [
-    "npm ci --prefix backend"
+    "cd backend && npm ci"
 ]
 
 [phases.build] 
 dependsOn = ["install"]
 cmds = [
-    "npm run build --prefix backend"
+    "cd backend && npm run build"
 ]
 
 [start]
 runImage = "ghcr.io/railwayapp/nixpacks:ubuntu-1698004610"
-cmd = "npm start"
+cmd = "cd backend && npm start"
