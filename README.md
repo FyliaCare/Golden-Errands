@@ -2,36 +2,31 @@
 
 A complete delivery management system with real-time tracking, order management, and driver coordination.
 
-## Tech Stack
+## 🚀 Tech Stack
 
 **Backend:**
-- Node.js 18.x with TypeScript
-- Express.js for REST API
+- Node.js 18+ with TypeScript
+- Express.js REST API
 - Prisma ORM with PostgreSQL
-- JWT authentication with bcrypt
-- Real-time tracking capabilities
+- JWT Authentication
+- Real-time tracking
 
 **Frontend:**
 - React with Vite
 - Google Maps integration
-- Document generation (invoices, receipts, quotations)
+- Document generation
 
-## Quick Start
+## 📦 Quick Start
 
 ### Backend Development
 
 ```bash
 cd backend
 npm install
-
-# Set up environment variables
 cp .env.example .env
 # Edit .env with your database credentials
 
-# Run migrations
 npx prisma migrate dev
-
-# Start development server
 npm run dev
 ```
 
@@ -43,23 +38,26 @@ npm install
 npm run dev
 ```
 
-## Railway Deployment
+## 🚀 Deploy to Vercel
 
-### Prerequisites
-1. PostgreSQL addon in Railway
-2. Environment variable: `JWT_SECRET` (generate a secure random string)
+### 1. Prerequisites
+- GitHub repository
+- Vercel account
+- PostgreSQL database (Vercel Postgres, Neon, or Supabase)
 
-### Deploy
-1. Connect Railway to your GitHub repository
-2. Railway auto-detects Nixpacks configuration
-3. Add PostgreSQL addon
-4. Set `JWT_SECRET` in environment variables
+### 2. Deploy
+1. Go to [vercel.com](https://vercel.com) → New Project
+2. Import: `FyliaCare/Golden-Errands`
+3. Configure:
+   - Root Directory: `backend`
+   - Build Command: `npm run vercel-build`
+   - Output Directory: `dist`
+4. Add Environment Variables:
+   - `DATABASE_URL` - Your PostgreSQL connection string
+   - `JWT_SECRET` - Your secure secret key
 5. Deploy!
 
-### Environment Variables Required
-- `DATABASE_URL` - Auto-provided by Railway PostgreSQL addon
-- `JWT_SECRET` - Your secure JWT secret key
-- `NODE_ENV` - Auto-set to "production"
+See [VERCEL_DEPLOY.md](VERCEL_DEPLOY.md) for detailed instructions.
 
 ## API Endpoints
 
