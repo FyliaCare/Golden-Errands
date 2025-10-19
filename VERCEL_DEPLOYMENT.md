@@ -1,4 +1,4 @@
-# Vercel Deployment Guide
+# Vercel Deployment Guide - Golden Errands
 
 ## 🚀 Quick Deploy
 
@@ -9,20 +9,32 @@
 
 ### Deployment Steps
 
-#### 1. Push Latest Code to GitHub
+#### 1. Verify Configuration Locally
+```bash
+# Run the deployment check
+node check-deployment.js
+
+# Test the build
+node build-vercel.js
+```
+
+All checks should pass ✅
+
+#### 2. Push Latest Code to GitHub
 ```bash
 git add .
 git commit -m "Configure for Vercel deployment"
 git push origin main
 ```
 
-#### 2. Import Project to Vercel
+#### 3. Import Project to Vercel
 1. Go to [vercel.com](https://vercel.com)
 2. Click "Add New..." → "Project"
-3. Import your GitHub repository
-4. Vercel will auto-detect the configuration from `vercel.json`
+3. Import your GitHub repository `FyliaCare/Golden-Errands`
+4. Vercel will auto-detect the Node.js project from `package.json`
+5. **Important:** The configuration in `vercel.json` will handle the build automatically
 
-#### 3. Configure Environment Variables
+#### 4. Configure Environment Variables
 Before deploying, add these environment variables in Vercel:
 
 **Required:**
@@ -42,27 +54,31 @@ Before deploying, add these environment variables in Vercel:
 3. Add each variable for Production, Preview, and Development
 4. Click "Save"
 
-#### 4. Deploy
+#### 5. Deploy
 Click "Deploy" button - Vercel will:
-1. Run `build.sh` which:
-   - Installs dependencies
-   - Generates Prisma Client (with placeholder)
-   - Compiles TypeScript
-2. Deploy the serverless function
-3. Your API will be available at `https://your-project.vercel.app`
+1. Detect the Node.js project from root `package.json`
+2. Run `node build-vercel.js` which:
+   - Installs backend dependencies
+   - Generates Prisma Client (with placeholder DATABASE_URL)
+   - Compiles TypeScript to `backend/dist/`
+3. Deploy the serverless function from `api/index.js`
+4. Your API will be available at `https://your-project.vercel.app`
+
+**Note:** First deploy may take 2-3 minutes. Subsequent deploys are faster.
 
 ---
 
 ## 🔍 How It Works
 
 ### Build Process
-1. **build.sh** runs during deployment
+1. **Root package.json** tells Vercel this is a Node.js project
+2. **build-vercel.js** runs during deployment (cross-platform)
    - Sets placeholder DATABASE_URL for Prisma generation
+   - Installs backend dependencies
    - Compiles TypeScript to `backend/dist/`
-   
-2. **api/index.js** is the serverless function entry point
+3. **api/index.js** is the serverless function entry point
    - Regenerates Prisma Client with real DATABASE_URL at runtime
-   - Imports and serves the Express app
+   - Imports and serves the Express app from `backend/dist/server.js`
 
 ### Runtime Flow
 ```
@@ -73,11 +89,29 @@ Request → Vercel Edge → api/index.js → Prisma Generate (first run) → Exp
 
 ## 🔧 Configuration Files
 
+### Root package.json
+```json
+{
+  "name": "golden-errands",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "node build-vercel.js",
+    "vercel-build": "node build-vercel.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+```
+- Tells Vercel this is a Node.js project
+- Specifies Node.js version requirement
+
 ### vercel.json
 ```json
 {
   "version": 2,
-  "buildCommand": "bash build.sh",
+  "buildCommand": "node build-vercel.js",
+  "outputDirectory": "backend/dist",
   "builds": [
     {
       "src": "api/index.js",
@@ -93,14 +127,15 @@ Request → Vercel Edge → api/index.js → Prisma Generate (first run) → Exp
 }
 ```
 
-- **buildCommand**: Runs our custom build script
-- **builds**: Defines serverless function
+- **buildCommand**: Runs our custom build script (cross-platform)
+- **outputDirectory**: Where TypeScript compiles to
+- **builds**: Defines serverless function at `api/index.js`
 - **routes**: Routes all traffic to our API handler
 
-### build.sh
-Custom build script that:
-- Installs dependencies
-- Sets placeholder DATABASE_URL
+### build-vercel.js
+Cross-platform Node.js build script that:
+- Installs backend dependencies
+- Sets placeholder DATABASE_URL (if not set)
 - Generates Prisma Client
 - Compiles TypeScript
 
