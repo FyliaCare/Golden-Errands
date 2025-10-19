@@ -1,63 +1,60 @@
-// Vercel Serverless Function Entry Point
+/**
+ * Vercel Serverless Function Adapter
+ * Clean, simple approach that works with Vercel's architecture
+ */
+
 const { execSync } = require('child_process');
 const path = require('path');
-const fs = require('fs');
 
 const backendPath = path.join(__dirname, '..', 'backend');
-const distPath = path.join(backendPath, 'dist', 'server.js');
 
-// Build backend if not already built
-if (!fs.existsSync(distPath)) {
-  console.log('🏗️  Building backend...');
+// Initialize Prisma Client on cold start (once per container)
+let prismaInitialized = false;
+
+function initializePrisma() {
+  if (prismaInitialized) return;
   
-  // Set placeholder DATABASE_URL for build
   if (!process.env.DATABASE_URL) {
-    process.env.DATABASE_URL = 'postgresql://placeholder:placeholder@placeholder:5432/placeholder';
+    throw new Error('DATABASE_URL environment variable not set in Vercel');
   }
   
   try {
-    // Install dependencies
-    execSync('npm install', { 
-      cwd: backendPath,
-      stdio: 'inherit',
-      env: process.env
-    });
-    
-    // Build
-    execSync('npm run vercel-build', { 
-      cwd: backendPath,
-      stdio: 'inherit',
-      env: process.env
-    });
-  } catch (error) {
-    console.error('Build failed:', error);
-    throw error;
-  }
-}
-
-// Ensure DATABASE_URL is set at runtime
-if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes('placeholder')) {
-  console.error('❌ DATABASE_URL not properly set!');
-  module.exports = (req, res) => {
-    res.status(500).json({ 
-      error: 'Database configuration error',
-      message: 'DATABASE_URL environment variable not set in Vercel'
-    });
-  };
-} else {
-  // Generate Prisma Client with real DATABASE_URL on cold start
-  try {
-    console.log('📦 Generating Prisma Client...');
+    console.log('🔄 Initializing Prisma Client for serverless...');
     execSync('npx prisma generate', { 
       cwd: backendPath,
       stdio: 'pipe',
       env: process.env
     });
+    prismaInitialized = true;
+    console.log('✅ Prisma Client ready');
   } catch (error) {
-    console.warn('⚠️  Prisma generate warning:', error.message);
+    console.error('Prisma initialization failed:', error.message);
+    throw error;
   }
-
-  // Import and export Express app
-  const app = require(distPath);
-  module.exports = app.default || app;
 }
+
+// Export handler
+module.exports = async (req, res) => {
+  try {
+    // Initialize Prisma on first request
+    if (!prismaInitialized) {
+      initializePrisma();
+    }
+    
+    // Import Express app (dynamically to ensure Prisma is ready)
+    const app = require(path.join(backendPath, 'dist', 'server.js'));
+    const expressApp = app.default || app;
+    
+    // Handle request with Express
+    return expressApp(req, res);
+    
+  } catch (error) {
+    console.error('❌ Serverless handler error:', error);
+    
+    return res.status(500).json({
+      error: 'Internal Server Error',
+      message: error.message,
+      hint: 'Check Vercel function logs for details'
+    });
+  }
+};
