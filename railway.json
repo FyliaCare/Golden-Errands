@@ -5,7 +5,7 @@
     "buildCommand": "npm ci --prefix backend && npx prisma generate --schema=backend/prisma/schema.prisma && npm run build --prefix backend"
   },
   "deploy": {
-    "startCommand": "npx prisma migrate deploy --schema=backend/prisma/schema.prisma && node backend/dist/server.js",
+    "startCommand": "cd backend && npx prisma migrate deploy && node dist/server.js",
     "numReplicas": 1,
     "sleepApplication": false,
     "restartPolicyType": "ON_FAILURE",
