@@ -60,12 +60,14 @@ export class AuthController {
       // Generate tokens
       const accessToken = jwt.sign(
         { id: user.id, email: user.email, role: user.role },
-        config.jwt.accessSecret
+        config.jwt.accessSecret,
+        { expiresIn: '15m' }
       );
 
       const refreshToken = jwt.sign(
         { id: user.id },
-        config.jwt.refreshSecret
+        config.jwt.refreshSecret,
+        { expiresIn: '7d' }
       );
 
       // Save refresh token
@@ -136,12 +138,14 @@ export class AuthController {
       // Generate tokens
       const accessToken = jwt.sign(
         { id: user.id, email: user.email, role: user.role },
-        config.jwt.accessSecret
+        config.jwt.accessSecret,
+        { expiresIn: '15m' }
       );
 
       const refreshToken = jwt.sign(
         { id: user.id },
-        config.jwt.refreshSecret
+        config.jwt.refreshSecret,
+        { expiresIn: '7d' }
       );
 
       // Save refresh token
@@ -198,7 +202,8 @@ export class AuthController {
       // Generate new access token
       const newAccessToken = jwt.sign(
         { id: storedToken.user.id, email: storedToken.user.email, role: storedToken.user.role },
-        config.jwt.accessSecret
+        config.jwt.accessSecret,
+        { expiresIn: '15m' }
       );
 
       res.json({

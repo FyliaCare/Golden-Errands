@@ -11,10 +11,10 @@ export const config = {
   },
   
   jwt: {
-    accessSecret: process.env.JWT_ACCESS_SECRET || 'change-this-secret',
+    accessSecret: process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET || 'change-this-secret',
     refreshSecret: process.env.JWT_REFRESH_SECRET || 'change-this-refresh-secret',
-    accessExpiry: (process.env.JWT_ACCESS_EXPIRY || '15m') as string,
-    refreshExpiry: (process.env.JWT_REFRESH_EXPIRY || '7d') as string,
+    accessExpiry: '15m',
+    refreshExpiry: '7d',
   },
   
   google: {
