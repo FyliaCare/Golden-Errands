@@ -1,7 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { config } from '../config';
-import { UserRole } from '@prisma/client';
+
+// User role constants
+const USER_ROLES = {
+  ADMIN: 'ADMIN',
+  DISPATCH_MANAGER: 'DISPATCH_MANAGER',
+  DRIVER: 'DRIVER',
+  CUSTOMER: 'CUSTOMER',
+  FINANCE: 'FINANCE'
+} as const;
+
+type UserRole = typeof USER_ROLES[keyof typeof USER_ROLES];
 
 export interface AuthRequest extends Request {
   user?: {

@@ -3,7 +3,18 @@ import { validationResult } from 'express-validator';
 import prisma from '../config/database';
 import { AuthRequest } from '../middleware/auth';
 import logger from '../utils/logger';
-import { OrderStatus } from '@prisma/client';
+
+// Order status constants
+const ORDER_STATUS = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  ASSIGNED: 'ASSIGNED',
+  PICKED_UP: 'PICKED_UP',
+  IN_TRANSIT: 'IN_TRANSIT',
+  DELIVERED: 'DELIVERED',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+} as const;
 
 export class OrderController {
   // Create new order
@@ -359,7 +370,7 @@ export class OrderController {
       const updatedOrder = await prisma.order.update({
         where: { id },
         data: {
-          status: status as OrderStatus,
+          status,
           ...(status === 'DELIVERED' && { completedAt: new Date() }),
           ...(status === 'CANCELLED' && { cancelledAt: new Date(), cancellationReason: notes }),
         },

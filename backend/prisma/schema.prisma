@@ -1,4 +1,4 @@
-// Golden Errands Delivery Management System - Database Schema (Production)
+// Golden Errands Delivery Management System - Universal Database Schema
 
 generator client {
   provider = "prisma-client-js"
@@ -10,20 +10,7 @@ datasource db {
 }
 
 // ============ USER MANAGEMENT ============
-
-enum UserRole {
-  ADMIN
-  DISPATCH_MANAGER
-  DRIVER
-  CUSTOMER
-  FINANCE
-}
-
-enum UserStatus {
-  ACTIVE
-  INACTIVE
-  SUSPENDED
-}
+// Using String instead of enums for SQLite compatibility
 
 model User {
   id                String      @id @default(uuid())
@@ -32,8 +19,8 @@ model User {
   firstName         String
   lastName          String
   phoneNumber       String?
-  role              UserRole    @default(CUSTOMER)
-  status            UserStatus  @default(ACTIVE)
+  role              String      @default("CUSTOMER") // ADMIN, DISPATCH_MANAGER, DRIVER, CUSTOMER, FINANCE
+  status            String      @default("ACTIVE")   // ACTIVE, INACTIVE, SUSPENDED
   emailVerified     Boolean     @default(false)
   phoneVerified     Boolean     @default(false)
   avatar            String?
@@ -55,10 +42,6 @@ model User {
   
   // Driver-specific fields
   driverProfile     DriverProfile?
-  
-  @@index([email])
-  @@index([role])
-  @@index([status])
 }
 
 model DriverProfile {
@@ -68,7 +51,7 @@ model DriverProfile {
   
   licenseNumber     String?
   licenseExpiry     DateTime?
-  vehicleType       VehicleType?
+  vehicleType       String?   // MOTORCYCLE, BICYCLE, CAR, VAN, TRUCK
   isAvailable       Boolean   @default(true)
   currentLat        Float?
   currentLng        Float?
@@ -79,8 +62,6 @@ model DriverProfile {
   
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
-  
-  @@index([isAvailable])
 }
 
 model RefreshToken {
@@ -90,54 +71,9 @@ model RefreshToken {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   expiresAt DateTime
   createdAt DateTime @default(now())
-  
-  @@index([userId])
 }
 
 // ============ ORDER & DELIVERY MANAGEMENT ============
-
-enum OrderStatus {
-  PENDING
-  CONFIRMED
-  ASSIGNED
-  PICKED_UP
-  IN_TRANSIT
-  DELIVERED
-  FAILED
-  CANCELLED
-}
-
-enum DeliveryType {
-  FOOD_DELIVERY
-  PARCEL_DELIVERY
-  GROCERY_ERRANDS
-  PHARMACEUTICAL
-  BUS_STATION_PICKUP
-  ONLINE_SHOPS
-  PERSONAL_ERRANDS
-  OTHER
-}
-
-enum PackageSize {
-  SMALL
-  MEDIUM
-  LARGE
-  EXTRA_LARGE
-}
-
-enum PaymentMethod {
-  CASH_ON_DELIVERY
-  ONLINE_CARD
-  MOBILE_MONEY
-  WALLET
-}
-
-enum PaymentStatus {
-  PENDING
-  PAID
-  FAILED
-  REFUNDED
-}
 
 model Order {
   id                String         @id @default(uuid())
@@ -164,8 +100,8 @@ model Order {
   recipientPhone    String?
   
   // Order Details
-  deliveryType      DeliveryType   @default(PARCEL_DELIVERY)
-  packageSize       PackageSize    @default(MEDIUM)
+  deliveryType      String         @default("PARCEL_DELIVERY") // FOOD_DELIVERY, PARCEL_DELIVERY, etc.
+  packageSize       String         @default("MEDIUM")          // SMALL, MEDIUM, LARGE, EXTRA_LARGE
   packageDescription String?
   itemsList         String?        // JSON stringified array
   packageValue      Float?
@@ -184,8 +120,8 @@ model Order {
   currency          String         @default("GHS")
   
   // Payment
-  paymentMethod     PaymentMethod  @default(CASH_ON_DELIVERY)
-  paymentStatus     PaymentStatus  @default(PENDING)
+  paymentMethod     String         @default("CASH_ON_DELIVERY") // CASH_ON_DELIVERY, ONLINE_CARD, MOBILE_MONEY, WALLET
+  paymentStatus     String         @default("PENDING")          // PENDING, PAID, FAILED, REFUNDED
   
   // Assignment
   assignedToId      String?
@@ -193,7 +129,7 @@ model Order {
   assignedAt        DateTime?
   
   // Status & Tracking
-  status            OrderStatus    @default(PENDING)
+  status            String         @default("PENDING") // PENDING, CONFIRMED, ASSIGNED, PICKED_UP, IN_TRANSIT, DELIVERED, FAILED, CANCELLED
   priority          Int            @default(0)
   estimatedDistance Float?         // in km
   estimatedDuration Int?           // in minutes
@@ -208,12 +144,6 @@ model Order {
   delivery          Delivery?
   payments          Payment[]
   trackingHistory   TrackingHistory[]
-  
-  @@index([customerId])
-  @@index([assignedToId])
-  @@index([status])
-  @@index([orderNumber])
-  @@index([createdAt])
 }
 
 model Delivery {
@@ -254,9 +184,6 @@ model Delivery {
   
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
-  
-  @@index([driverId])
-  @@index([orderId])
 }
 
 model TrackingHistory {
@@ -270,33 +197,16 @@ model TrackingHistory {
   lng         Float?
   notes       String?
   timestamp   DateTime @default(now())
-  
-  @@index([orderId])
-  @@index([timestamp])
 }
 
 // ============ VEHICLE MANAGEMENT ============
-
-enum VehicleType {
-  MOTORCYCLE
-  BICYCLE
-  CAR
-  VAN
-  TRUCK
-}
-
-enum VehicleStatus {
-  ACTIVE
-  INACTIVE
-  MAINTENANCE
-}
 
 model Vehicle {
   id              String        @id @default(uuid())
   driverId        String
   driver          User          @relation(fields: [driverId], references: [id], onDelete: Cascade)
   
-  vehicleType     VehicleType
+  vehicleType     String        // MOTORCYCLE, BICYCLE, CAR, VAN, TRUCK
   make            String?
   model           String?
   year            Int?
@@ -304,7 +214,7 @@ model Vehicle {
   color           String?
   capacity        Float?        // max weight in kg
   
-  status          VehicleStatus @default(ACTIVE)
+  status          String        @default("ACTIVE") // ACTIVE, INACTIVE, MAINTENANCE
   
   insuranceExpiry DateTime?
   lastMaintenance DateTime?
@@ -313,9 +223,6 @@ model Vehicle {
   updatedAt       DateTime      @updatedAt
   
   deliveries      Delivery[]
-  
-  @@index([driverId])
-  @@index([status])
 }
 
 // ============ PAYMENT & INVOICING ============
@@ -330,8 +237,8 @@ model Payment {
   
   amount          Float
   currency        String        @default("GHS")
-  paymentMethod   PaymentMethod
-  paymentStatus   PaymentStatus @default(PENDING)
+  paymentMethod   String        // CASH_ON_DELIVERY, ONLINE_CARD, MOBILE_MONEY, WALLET
+  paymentStatus   String        @default("PENDING") // PENDING, PAID, FAILED, REFUNDED
   
   // Payment Gateway
   gatewayProvider String?       // PAYSTACK, STRIPE, CASH
@@ -351,10 +258,6 @@ model Payment {
   paidAt          DateTime?
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
-  
-  @@index([orderId])
-  @@index([userId])
-  @@index([paymentStatus])
 }
 
 // ============ ZONES & PRICING ============
@@ -378,23 +281,12 @@ model DeliveryZone {
 
 // ============ NOTIFICATIONS & MESSAGING ============
 
-enum NotificationType {
-  ORDER_CREATED
-  ORDER_ASSIGNED
-  ORDER_PICKED_UP
-  ORDER_DELIVERED
-  PAYMENT_RECEIVED
-  DRIVER_NEARBY
-  DELIVERY_DELAYED
-  SYSTEM_ALERT
-}
-
 model Notification {
   id        String           @id @default(uuid())
   userId    String
   user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   
-  type      NotificationType
+  type      String           // ORDER_CREATED, ORDER_ASSIGNED, ORDER_PICKED_UP, etc.
   title     String
   message   String
   data      String?          // JSON additional data
@@ -403,9 +295,6 @@ model Notification {
   readAt    DateTime?
   
   createdAt DateTime         @default(now())
-  
-  @@index([userId])
-  @@index([read])
 }
 
 model Message {
@@ -423,10 +312,6 @@ model Message {
   readAt      DateTime?
   
   createdAt   DateTime @default(now())
-  
-  @@index([fromUserId])
-  @@index([toUserId])
-  @@index([orderId])
 }
 
 // ============ AUDIT & SECURITY ============
@@ -444,10 +329,6 @@ model AuditLog {
   userAgent   String?
   
   createdAt   DateTime @default(now())
-  
-  @@index([userId])
-  @@index([entity])
-  @@index([createdAt])
 }
 
 // ============ SYSTEM CONFIGURATION ============
@@ -461,6 +342,4 @@ model SystemSetting {
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  @@index([category])
 }
