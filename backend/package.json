@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "node build-vercel.js",
-    "start": "node dist/server.js",
+    "start": "node start-vercel.js",
     "vercel-build": "node build-vercel.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
