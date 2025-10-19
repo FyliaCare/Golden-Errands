@@ -16,7 +16,7 @@
     "build:frontend": "cd frontend && npm run build",
     "build:railway": "cd backend && npm ci && npx prisma generate && npm run build",
     "start": "cd backend && npm start",
-    "start:railway": "cd backend && npx prisma migrate deploy && node dist/server.js",
+    "start:railway": "npm run start --prefix backend",
     "deploy:railway": "npm run build:railway && npm run start:railway",
     "dev": "npm run dev:backend",
     "dev:backend": "cd backend && npm run dev",

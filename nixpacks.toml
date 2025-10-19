@@ -20,4 +20,4 @@ cmds = [
 ]
 
 [start]
-cmd = "cd backend && npx prisma migrate deploy && node dist/server.js"
+cmd = "npm run start --prefix backend"
