@@ -4,6 +4,7 @@ import orderRoutes from './order.routes';
 import userRoutes from './user.routes';
 import driverRoutes from './driver.routes';
 import paymentRoutes from './payment.routes';
+import setupRoutes from './setup.routes';
 
 const router = Router();
 
@@ -12,5 +13,6 @@ router.use('/orders', orderRoutes);
 router.use('/users', userRoutes);
 router.use('/drivers', driverRoutes);
 router.use('/payments', paymentRoutes);
+router.use('/setup', setupRoutes);
 
 export default router;
