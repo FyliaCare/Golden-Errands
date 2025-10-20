@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken } from '@/lib/auth';
+import { verifyAccessToken } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 
 export async function requireAuth(req: NextRequest, allowedRoles?: string[]) {
@@ -11,7 +11,7 @@ export async function requireAuth(req: NextRequest, allowedRoles?: string[]) {
     }
 
     const token = authHeader.substring(7);
-    const payload = await verifyToken(token);
+    const payload = await verifyAccessToken(token);
 
     if (!payload) {
       return { error: 'Invalid or expired token', status: 401 };
@@ -19,7 +19,7 @@ export async function requireAuth(req: NextRequest, allowedRoles?: string[]) {
 
     // Check if user still exists and is active
     const user = await prisma.user.findUnique({
-      where: { id: payload.userId },
+      where: { id: payload.id },
       select: {
         id: true,
         email: true,

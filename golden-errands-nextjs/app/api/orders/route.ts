@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     // Build query based on user role
     let whereClause: any = {};
 
-    if (currentUser.role === 'CUSTOMER') {
+    if (currentUser.role === 'CLIENT') {
       whereClause.customerId = currentUser.id;
     } else if (currentUser.role === 'DRIVER') {
       whereClause.assignedToId = currentUser.id;

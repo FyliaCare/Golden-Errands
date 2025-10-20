@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
         firstName: validatedData.firstName,
         lastName: validatedData.lastName,
         phoneNumber: validatedData.phoneNumber,
-        role: validatedData.role || 'CUSTOMER',
+        role: validatedData.role || 'CLIENT',
       },
       select: {
         id: true,

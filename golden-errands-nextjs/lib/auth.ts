@@ -11,7 +11,7 @@ const JWT_REFRESH_SECRET = new TextEncoder().encode(
   process.env.JWT_REFRESH_SECRET || 'your-super-secret-refresh-key-change-in-production'
 );
 
-export type UserRole = 'ADMIN' | 'DISPATCH_MANAGER' | 'DRIVER' | 'CUSTOMER' | 'FINANCE';
+export type UserRole = 'SYSTEM_ADMIN' | 'DRIVER' | 'CLIENT';
 
 export interface JWTPayload {
   id: string;

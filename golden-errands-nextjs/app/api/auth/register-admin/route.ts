@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { hash } from 'bcryptjs';
 import prisma from '@/lib/prisma';
-import { verifyToken } from '@/lib/auth';
+import { verifyAccessToken } from '@/lib/auth';
 
 export const runtime = 'nodejs';
 
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     }
 
     const token = authHeader.substring(7);
-    const payload = await verifyToken(token);
+    const payload = await verifyAccessToken(token);
 
     if (!payload || payload.role !== 'SYSTEM_ADMIN') {
       return NextResponse.json(

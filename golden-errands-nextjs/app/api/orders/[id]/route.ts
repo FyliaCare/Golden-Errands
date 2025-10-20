@@ -64,7 +64,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     // Check if user has access to this order
     if (
-      currentUser.role === 'CUSTOMER' && order.customerId !== currentUser.id ||
+      currentUser.role === 'CLIENT' && order.customerId !== currentUser.id ||
       currentUser.role === 'DRIVER' && order.assignedToId !== currentUser.id
     ) {
       return forbiddenResponse('Access denied');
@@ -96,10 +96,10 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     }
 
     // Only customer or admin can cancel
-    if (currentUser.role === 'CUSTOMER' && order.customerId !== currentUser.id) {
+    if (currentUser.role === 'CLIENT' && order.customerId !== currentUser.id) {
       return forbiddenResponse('Access denied');
     }
-    if (currentUser.role !== 'ADMIN' && currentUser.role !== 'DISPATCH_MANAGER' && order.customerId !== currentUser.id) {
+    if (currentUser.role !== 'SYSTEM_ADMIN' && order.customerId !== currentUser.id) {
       return forbiddenResponse('Access denied');
     }
 

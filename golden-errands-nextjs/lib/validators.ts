@@ -7,8 +7,8 @@ export const registerSchema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters'),
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
-  phoneNumber: z.string().optional(),
-  role: z.enum(['ADMIN', 'DISPATCH_MANAGER', 'DRIVER', 'CUSTOMER', 'FINANCE']).optional(),
+  phoneNumber: z.string().min(1, 'Phone number is required'),
+  role: z.enum(['SYSTEM_ADMIN', 'DRIVER', 'CLIENT']).optional(),
 });
 
 export const loginSchema = z.object({
