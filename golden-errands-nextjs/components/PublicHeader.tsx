@@ -19,6 +19,7 @@ import {
   CarOutlined,
   TeamOutlined,
 } from '@ant-design/icons';
+import InstallPWA from './InstallPWA';
 
 export default function PublicHeader() {
   const [drawerVisible, setDrawerVisible] = useState(false);
@@ -86,6 +87,7 @@ export default function PublicHeader() {
 
         {/* Desktop Actions */}
         <Space className="desktop-actions">
+          <InstallPWA />
           <Link href="/login">
             <Button type="primary" icon={<LoginOutlined />} size="large" danger>
               Login
@@ -125,7 +127,8 @@ export default function PublicHeader() {
           }))}
         />
         <div style={{ marginTop: 20, padding: '0 16px' }}>
-          <Link href="/login">
+          <InstallPWA />
+          <Link href="/login" style={{ marginTop: 12, display: 'block' }}>
             <Button type="primary" icon={<LoginOutlined />} block size="large" danger>
               Login
             </Button>

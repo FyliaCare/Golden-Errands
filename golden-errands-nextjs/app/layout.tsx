@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import AntdProvider from "@/components/AntdProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
+import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 
 export const metadata: Metadata = {
   title: "Golden Errands - Delivery Platform",
@@ -37,6 +38,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Golden Errands" />
       </head>
       <body>
+        <ServiceWorkerRegistration />
         <AntdProvider>
           <AuthProvider>
             {children}
