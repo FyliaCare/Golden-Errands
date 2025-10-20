@@ -69,7 +69,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('refreshToken', data.data.refreshToken);
     localStorage.setItem('user', JSON.stringify(data.data.user));
 
-    router.push('/dashboard');
+    // Redirect based on user role
+    const userRole = data.data.user.role;
+    if (userRole === 'SYSTEM_ADMIN') {
+      router.push('/admin/dashboard');
+    } else if (userRole === 'DRIVER') {
+      router.push('/driver/dashboard');
+    } else {
+      router.push('/dashboard'); // CLIENT goes to /dashboard
+    }
   };
 
   const register = async (registerData: any) => {
@@ -94,7 +102,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('refreshToken', data.data.refreshToken);
     localStorage.setItem('user', JSON.stringify(data.data.user));
 
-    router.push('/dashboard');
+    // Redirect based on user role
+    const userRole = data.data.user.role;
+    if (userRole === 'SYSTEM_ADMIN') {
+      router.push('/admin/dashboard');
+    } else if (userRole === 'DRIVER') {
+      router.push('/driver/dashboard');
+    } else {
+      router.push('/dashboard'); // CLIENT goes to /dashboard
+    }
   };
 
   const logout = () => {
