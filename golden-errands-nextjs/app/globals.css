@@ -429,6 +429,134 @@ h4 {
   }
 }
 
+/* ============ MOBILE-FIRST PUBLIC PAGES ============ */
+
+/* Hero Sections - Mobile First */
+.page-hero {
+  padding: 40px 16px;
+  text-align: center;
+}
+
+.page-hero-title {
+  font-size: 28px !important;
+  margin-bottom: 12px !important;
+}
+
+.page-hero-subtitle {
+  font-size: 15px !important;
+}
+
+/* Content Sections - Mobile First */
+.page-section {
+  padding: 40px 16px;
+}
+
+.section-title {
+  font-size: 24px !important;
+  margin-bottom: 16px !important;
+}
+
+.section-subtitle {
+  font-size: 14px !important;
+  line-height: 1.6;
+}
+
+/* Cards - Mobile Optimized */
+.mobile-card {
+  margin-bottom: 16px;
+}
+
+.mobile-card .ant-card-body {
+  padding: 16px !important;
+}
+
+.mobile-card-title {
+  font-size: 18px !important;
+  margin-bottom: 8px !important;
+}
+
+.mobile-card-text {
+  font-size: 14px !important;
+  line-height: 1.5;
+}
+
+/* Tablet & Desktop Responsive */
+@media (min-width: 768px) {
+  .page-hero {
+    padding: 60px 20px;
+  }
+  
+  .page-hero-title {
+    font-size: 38px !important;
+    margin-bottom: 16px !important;
+  }
+  
+  .page-hero-subtitle {
+    font-size: 18px !important;
+  }
+  
+  .page-section {
+    padding: 60px 20px;
+  }
+  
+  .section-title {
+    font-size: 32px !important;
+    margin-bottom: 20px !important;
+  }
+  
+  .section-subtitle {
+    font-size: 16px !important;
+  }
+  
+  .mobile-card .ant-card-body {
+    padding: 24px !important;
+  }
+  
+  .mobile-card-title {
+    font-size: 22px !important;
+    margin-bottom: 12px !important;
+  }
+  
+  .mobile-card-text {
+    font-size: 15px !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .page-hero {
+    padding: 80px 20px;
+  }
+  
+  .page-hero-title {
+    font-size: 48px !important;
+  }
+  
+  .page-hero-subtitle {
+    font-size: 20px !important;
+  }
+  
+  .page-section {
+    padding: 80px 20px;
+  }
+  
+  .section-title {
+    font-size: 36px !important;
+    margin-bottom: 24px !important;
+  }
+  
+  .section-subtitle {
+    font-size: 18px !important;
+  }
+  
+  .mobile-card-title {
+    font-size: 24px !important;
+  }
+  
+  .mobile-card-text {
+    font-size: 16px !important;
+  }
+}
+
 /* ============ SAFE AREA FOR NOTCH DEVICES ============ */
 body {
   padding-top: env(safe-area-inset-top);
