@@ -72,36 +72,62 @@ export default function HomePage() {
       <section
         style={{
           background: 'linear-gradient(135deg, #E63946 0%, #C1121F 100%)',
-          padding: '80px 20px',
+          padding: '40px 16px',
           textAlign: 'center',
           color: 'white',
           position: 'relative',
           overflow: 'hidden',
         }}
+        className="hero-section"
       >
+        <style jsx>{`
+          @media (min-width: 768px) {
+            .hero-section {
+              padding: 80px 20px !important;
+            }
+            .hero-icon {
+              font-size: 64px !important;
+            }
+            .hero-title {
+              font-size: 48px !important;
+            }
+            .hero-subtitle {
+              font-size: 24px !important;
+            }
+            .hero-text {
+              font-size: 20px !important;
+            }
+            .hero-button {
+              height: 50px !important;
+              padding: 0 32px !important;
+              font-size: 18px !important;
+            }
+          }
+        `}</style>
         <div style={{ position: 'relative', zIndex: 1, maxWidth: 1200, margin: '0 auto' }}>
           <div style={{ marginBottom: 24 }}>
-            <RocketOutlined style={{ fontSize: 64, marginBottom: 16 }} />
-            <Title level={1} style={{ color: 'white', fontSize: 48, marginBottom: 8 }}>
+            <RocketOutlined className="hero-icon" style={{ fontSize: 40, marginBottom: 16 }} />
+            <Title level={1} className="hero-title" style={{ color: 'white', fontSize: 32, marginBottom: 8 }}>
               GOLDEN ERRANDS
             </Title>
-            <Title level={3} style={{ color: '#FFB703', fontWeight: 'normal', marginTop: 0 }}>
+            <Title level={3} className="hero-subtitle" style={{ color: '#FFB703', fontWeight: 'normal', marginTop: 0, fontSize: 18 }}>
               We Deliver with Passion!
             </Title>
           </div>
 
-          <Paragraph style={{ fontSize: 20, color: 'white', maxWidth: 600, margin: '0 auto 32px' }}>
+          <Paragraph className="hero-text" style={{ fontSize: 16, color: 'white', maxWidth: 600, margin: '0 auto 24px', padding: '0 16px' }}>
             Your trusted partner for fast, reliable, and professional delivery services.
             From food to parcels, we handle your errands with care.
           </Paragraph>
 
-          <Space size="large" wrap style={{ marginBottom: 32 }}>
+          <Space size="middle" wrap style={{ marginBottom: 24 }}>
             <Link href="/login">
               <button
+                className="hero-button"
                 style={{
-                  height: 50,
-                  padding: '0 32px',
-                  fontSize: 18,
+                  height: 44,
+                  padding: '0 20px',
+                  fontSize: 16,
                   background: '#FFB703',
                   border: 'none',
                   borderRadius: 8,
@@ -119,10 +145,11 @@ export default function HomePage() {
             </Link>
             <a href="tel:0256039212">
               <button
+                className="hero-button"
                 style={{
-                  height: 50,
-                  padding: '0 32px',
-                  fontSize: 18,
+                  height: 44,
+                  padding: '0 20px',
+                  fontSize: 16,
                   background: 'white',
                   border: 'none',
                   borderRadius: 8,
@@ -135,17 +162,17 @@ export default function HomePage() {
                 }}
               >
                 <PhoneOutlined />
-                Call Us Now
+                Call Us
               </button>
             </a>
           </Space>
 
-          <div style={{ marginTop: 32 }}>
-            <Space size="large" wrap>
-              <Space>
-                <PhoneOutlined style={{ fontSize: 20 }} />
-                <Text strong style={{ color: 'white', fontSize: 16 }}>
-                  0256039212 | 0256039213 | 0256039214
+          <div style={{ marginTop: 24 }}>
+            <Space size="small" wrap direction="vertical">
+              <Space size="small">
+                <PhoneOutlined style={{ fontSize: 16 }} />
+                <Text strong style={{ color: 'white', fontSize: 14 }}>
+                  0256039212 | 0256039213
                 </Text>
               </Space>
             </Space>
@@ -154,13 +181,21 @@ export default function HomePage() {
       </section>
 
       {/* Stats Section */}
-      <section style={{ padding: '60px 20px', background: '#fafafa' }}>
+      <section className="stats-section" style={{ padding: '40px 16px', background: '#fafafa' }}>
+        <style jsx>{`
+          @media (min-width: 768px) {
+            .stats-section {
+              padding: 60px 20px !important;
+            }
+          }
+        `}</style>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <Row gutter={[24, 24]}>
+          <Row gutter={[16, 16]}>
             {features.map((stat, index) => (
-              <Col xs={24} sm={12} lg={6} key={index}>
+              <Col xs={12} sm={12} lg={6} key={index}>
                 <Card
                   bordered={false}
+                  className="mobile-full-width"
                   style={{
                     textAlign: 'center',
                     boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
@@ -183,18 +218,64 @@ export default function HomePage() {
       </section>
 
       {/* Services Section */}
-      <section style={{ padding: '80px 20px', background: 'white' }}>
+      <section className="services-section" style={{ padding: '40px 16px', background: 'white' }}>
+        <style jsx>{`
+          .services-section .section-title {
+            font-size: 28px;
+          }
+          .services-section .section-subtitle {
+            font-size: 14px;
+          }
+          .services-section .service-icon-wrapper {
+            width: 60px;
+            height: 60px;
+          }
+          .services-section .service-icon-wrapper > * {
+            font-size: 30px !important;
+          }
+          .services-section .service-title {
+            font-size: 16px;
+          }
+          .services-section .service-description {
+            font-size: 13px;
+          }
+          
+          @media (min-width: 768px) {
+            .services-section {
+              padding: 80px 20px !important;
+            }
+            .services-section .section-title {
+              font-size: 36px !important;
+            }
+            .services-section .section-subtitle {
+              font-size: 18px !important;
+            }
+            .services-section .service-icon-wrapper {
+              width: 80px !important;
+              height: 80px !important;
+            }
+            .services-section .service-icon-wrapper > * {
+              font-size: 40px !important;
+            }
+            .services-section .service-title {
+              font-size: 18px !important;
+            }
+            .services-section .service-description {
+              font-size: 14px !important;
+            }
+          }
+        `}</style>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <Title level={2} style={{ color: '#E63946', fontSize: 36 }}>
+          <div style={{ textAlign: 'center', marginBottom: 32 }}>
+            <Title level={2} className="section-title" style={{ color: '#E63946' }}>
               Our Services
             </Title>
-            <Paragraph style={{ fontSize: 18, color: '#666', maxWidth: 600, margin: '0 auto' }}>
+            <Paragraph className="section-subtitle" style={{ color: '#666', maxWidth: 600, margin: '0 auto' }}>
               We offer a wide range of delivery and errand services tailored to your needs
             </Paragraph>
           </div>
 
-          <Row gutter={[24, 24]}>
+          <Row gutter={[16, 16]}>
             {services.map((service, index) => (
               <Col xs={24} sm={12} lg={8} key={index}>
                 <Card
@@ -208,9 +289,8 @@ export default function HomePage() {
                   bodyStyle={{ textAlign: 'center' }}
                 >
                   <div
+                    className="service-icon-wrapper"
                     style={{
-                      width: 80,
-                      height: 80,
                       borderRadius: '50%',
                       background: `${service.color}15`,
                       display: 'flex',
@@ -220,13 +300,13 @@ export default function HomePage() {
                     }}
                   >
                     {React.cloneElement(service.icon, {
-                      style: { fontSize: 40, color: service.color },
+                      style: { color: service.color },
                     })}
                   </div>
-                  <Title level={4} style={{ color: '#1a1a1a', marginBottom: 8 }}>
+                  <Title level={4} className="service-title" style={{ color: '#1a1a1a', marginBottom: 8 }}>
                     {service.title}
                   </Title>
-                  <Text style={{ color: '#666' }}>{service.description}</Text>
+                  <Text className="service-description" style={{ color: '#666' }}>{service.description}</Text>
                 </Card>
               </Col>
             ))}
@@ -236,40 +316,73 @@ export default function HomePage() {
 
       {/* Contact Section */}
       <section
+        className="contact-section"
         style={{
-          padding: '60px 20px',
+          padding: '40px 16px',
           background: '#1a1a1a',
           color: 'white',
           textAlign: 'center',
         }}
       >
+        <style jsx>{`
+          .contact-section .brand-title {
+            font-size: 24px;
+          }
+          .contact-section .brand-subtitle {
+            font-size: 16px;
+          }
+          .contact-section .phone-icon {
+            font-size: 16px;
+          }
+          .contact-section .phone-text {
+            font-size: 14px;
+          }
+          
+          @media (min-width: 768px) {
+            .contact-section {
+              padding: 60px 20px !important;
+            }
+            .contact-section .brand-title {
+              font-size: 28px !important;
+            }
+            .contact-section .brand-subtitle {
+              font-size: 20px !important;
+            }
+            .contact-section .phone-icon {
+              font-size: 20px !important;
+            }
+            .contact-section .phone-text {
+              font-size: 16px !important;
+            }
+          }
+        `}</style>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <Title level={2} style={{ color: '#FFB703', marginBottom: 8 }}>
+          <Title level={2} className="brand-title" style={{ color: '#FFB703', marginBottom: 8 }}>
             GOLDEN ERRANDS
           </Title>
-          <Title level={4} style={{ color: '#E63946', fontWeight: 'normal', marginTop: 0 }}>
+          <Title level={4} className="brand-subtitle" style={{ color: '#E63946', fontWeight: 'normal', marginTop: 0 }}>
             We Deliver with Passion!
           </Title>
 
-          <Space direction="vertical" size="large" style={{ marginTop: 32 }}>
-            <Space size="large" wrap>
-              <Space>
-                <PhoneOutlined style={{ fontSize: 20, color: '#FFB703' }} />
-                <Text strong style={{ color: 'white', fontSize: 16 }}>
+          <Space direction="vertical" size="middle" style={{ marginTop: 24, width: '100%' }}>
+            <Space size="small" wrap style={{ justifyContent: 'center' }}>
+              <Space size="small">
+                <PhoneOutlined className="phone-icon" style={{ color: '#FFB703' }} />
+                <Text strong className="phone-text" style={{ color: 'white' }}>
                   0256039212
                 </Text>
               </Space>
               <Text style={{ color: '#666' }}>|</Text>
-              <Space>
-                <PhoneOutlined style={{ fontSize: 20, color: '#FFB703' }} />
-                <Text strong style={{ color: 'white', fontSize: 16 }}>
+              <Space size="small">
+                <PhoneOutlined className="phone-icon" style={{ color: '#FFB703' }} />
+                <Text strong className="phone-text" style={{ color: 'white' }}>
                   0256039213
                 </Text>
               </Space>
               <Text style={{ color: '#666' }}>|</Text>
-              <Space>
-                <PhoneOutlined style={{ fontSize: 20, color: '#FFB703' }} />
-                <Text strong style={{ color: 'white', fontSize: 16 }}>
+              <Space size="small">
+                <PhoneOutlined className="phone-icon" style={{ color: '#FFB703' }} />
+                <Text strong className="phone-text" style={{ color: 'white' }}>
                   0256039214
                 </Text>
               </Space>
