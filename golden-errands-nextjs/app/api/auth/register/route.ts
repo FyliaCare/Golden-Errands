@@ -1,10 +1,13 @@
-// POST /api/auth/register - Register new user
+// POST /api/auth/register - User registration
 import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
 import { hashPassword, generateAccessToken, generateRefreshToken } from '@/lib/auth';
 import { successResponse, errorResponse, validationErrorResponse, serverErrorResponse } from '@/lib/api-response';
 import { registerSchema, validateRequest } from '@/lib/validators';
 import { ZodError } from 'zod';
+
+// Force Node.js runtime (bcryptjs doesn't work in Edge runtime)
+export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
   try {

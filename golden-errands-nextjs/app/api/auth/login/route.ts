@@ -6,6 +6,9 @@ import { successResponse, errorResponse, validationErrorResponse, serverErrorRes
 import { loginSchema, validateRequest } from '@/lib/validators';
 import { ZodError } from 'zod';
 
+// Force Node.js runtime (bcryptjs doesn't work in Edge runtime)
+export const runtime = 'nodejs';
+
 export async function POST(request: NextRequest) {
   try {
     // Parse and validate request body

@@ -17,6 +17,7 @@ export interface JWTPayload {
   id: string;
   email: string;
   role: UserRole;
+  [key: string]: any; // Index signature for jose compatibility
 }
 
 // Hash password
