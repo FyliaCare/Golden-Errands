@@ -12,19 +12,53 @@ datasource db {
 
 // ============ USER MANAGEMENT ============
 
+enum UserRole {
+  SYSTEM_ADMIN      // Full system control - manages everything
+  DRIVER            // Delivery riders/drivers
+  CLIENT            // Customers, shop owners, online shops
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  PENDING_VERIFICATION
+}
+
+enum BusinessType {
+  INDIVIDUAL        // Regular individual customer
+  SHOP_OWNER        // Physical shop owner
+  ONLINE_SHOP       // E-commerce/online business
+  RESTAURANT        // Restaurant/food business
+  PHARMACY          // Pharmacy/medical supplies
+  CORPORATE         // Large corporate client
+}
+
 model User {
   id                String      @id @default(cuid())
   email             String      @unique
   password          String
   firstName         String
   lastName          String
-  phoneNumber       String?
-  role              String      @default("CUSTOMER") // ADMIN, DISPATCH_MANAGER, DRIVER, CUSTOMER, FINANCE
-  status            String      @default("ACTIVE")   // ACTIVE, INACTIVE, SUSPENDED
+  phoneNumber       String      @unique
+  role              UserRole    @default(CLIENT)
+  status            UserStatus  @default(PENDING_VERIFICATION)
   emailVerified     Boolean     @default(false)
   phoneVerified     Boolean     @default(false)
   avatar            String?
   address           String?
+  city              String?
+  region            String?
+  
+  // Business Information (for CLIENT role)
+  businessType      BusinessType? @default(INDIVIDUAL)
+  businessName      String?
+  businessAddress   String?
+  businessPhone     String?
+  businessEmail     String?
+  businessLicense   String?      // Business registration number
+  taxId             String?
+  
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
   lastLogin         DateTime?
@@ -40,8 +74,27 @@ model User {
   messages          Message[]
   payments          Payment[]
   
-  // Driver-specific fields
+  // Role-specific profiles
   driverProfile     DriverProfile?
+  adminProfile      AdminProfile?
+}
+
+model AdminProfile {
+  id                String    @id @default(cuid())
+  userId            String    @unique
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  department        String?   // Operations, Finance, Support, etc.
+  accessLevel       String    @default("FULL") // FULL, LIMITED
+  canManageUsers    Boolean   @default(true)
+  canManageOrders   Boolean   @default(true)
+  canManageDrivers  Boolean   @default(true)
+  canManagePayments Boolean   @default(true)
+  canViewReports    Boolean   @default(true)
+  canEditSettings   Boolean   @default(true)
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 }
 
 model DriverProfile {
@@ -52,13 +105,29 @@ model DriverProfile {
   licenseNumber     String?
   licenseExpiry     DateTime?
   vehicleType       String?   // MOTORCYCLE, BICYCLE, CAR, VAN, TRUCK
-  isAvailable       Boolean   @default(true)
+  isAvailable       Boolean   @default(false)
+  isOnline          Boolean   @default(false)
   currentLat        Float?
   currentLng        Float?
   lastLocationUpdate DateTime?
   rating            Float     @default(5.0)
   totalDeliveries   Int       @default(0)
   completedDeliveries Int     @default(0)
+  cancelledDeliveries Int     @default(0)
+  
+  // Verification & Documents
+  idCardUrl         String?
+  licenseUrl        String?
+  profilePhotoUrl   String?
+  verificationStatus String   @default("PENDING") // PENDING, VERIFIED, REJECTED
+  verifiedAt        DateTime?
+  verifiedBy        String?   // Admin user ID
+  
+  // Banking Info for payouts
+  bankName          String?
+  accountNumber     String?
+  accountName       String?
+  mobileMoneyNumber String?
   
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt

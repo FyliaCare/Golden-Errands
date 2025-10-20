@@ -15,11 +15,12 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validatedData = await validateRequest(loginSchema, body);
 
-    // Find user
+    // Find user with role-specific profiles
     const user = await prisma.user.findUnique({
       where: { email: validatedData.email },
       include: {
         driverProfile: true,
+        adminProfile: true,
       },
     });
 
@@ -28,6 +29,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Check account status
+    if (user.status === 'SUSPENDED') {
+      return errorResponse('Your account has been suspended. Please contact support.', null, 403);
+    }
+
+    if (user.status === 'PENDING_VERIFICATION') {
+      return errorResponse('Your account is pending verification. Please check your email/phone.', null, 403);
+    }
+
     if (user.status !== 'ACTIVE') {
       return errorResponse('Account is not active', null, 403);
     }
@@ -38,13 +47,23 @@ export async function POST(request: NextRequest) {
       return errorResponse('Invalid credentials', null, 401);
     }
 
+    // Additional checks for DRIVER role
+    if (user.role === 'DRIVER' && user.driverProfile) {
+      if (user.driverProfile.verificationStatus === 'PENDING') {
+        return errorResponse('Your driver profile is pending verification', null, 403);
+      }
+      if (user.driverProfile.verificationStatus === 'REJECTED') {
+        return errorResponse('Your driver application was rejected. Please contact support.', null, 403);
+      }
+    }
+
     // Update last login
     await prisma.user.update({
       where: { id: user.id },
       data: { lastLogin: new Date() },
     });
 
-    // Generate tokens
+    // Generate tokens with role information
     const accessToken = await generateAccessToken({
       id: user.id,
       email: user.email,
@@ -68,11 +87,22 @@ export async function POST(request: NextRequest) {
     // Remove password from response
     const { password: _, ...userWithoutPassword } = user;
 
+    // Determine dashboard redirect based on role
+    let dashboardUrl = '/dashboard';
+    if (user.role === 'SYSTEM_ADMIN') {
+      dashboardUrl = '/admin/dashboard';
+    } else if (user.role === 'DRIVER') {
+      dashboardUrl = '/driver/dashboard';
+    } else if (user.role === 'CLIENT') {
+      dashboardUrl = '/dashboard';
+    }
+
     return successResponse(
       {
         user: userWithoutPassword,
         accessToken,
         refreshToken,
+        dashboardUrl,
       },
       'Login successful'
     );
