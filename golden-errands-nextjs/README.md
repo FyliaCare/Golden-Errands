@@ -6,10 +6,10 @@ A modern, full-stack delivery management platform built with Next.js 15, TypeScr
 
 - **Frontend:** Next.js 15 (App Router), React, TypeScript, Ant Design
 - **Backend:** Next.js API Routes
-- **Database:** PostgreSQL (Neon)
+- **Database:** PostgreSQL (Vercel Postgres / Neon)
 - **ORM:** Prisma
 - **Auth:** JWT (jose)
-- **Deployment:** Railway
+- **Deployment:** Vercel (Free Forever!)
 
 ## Features
 
@@ -65,12 +65,28 @@ Open [http://localhost:3000](http://localhost:3000) to view the app.
 
 ## Deployment
 
-Deployed on Railway with:
-- Automatic deployments from GitHub
-- PostgreSQL database (Neon)
-- Environment variables configured
-- Build command: `npm run build`
-- Start command: `npm start`
+### Vercel (Primary - Recommended)
+**See [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md) for detailed guide**
+
+Quick steps:
+1. Push code to GitHub
+2. Import project on Vercel: https://vercel.com/new
+3. Add environment variables (DATABASE_URL, JWT secrets)
+4. Deploy! (automatic from GitHub)
+
+**Free tier includes:**
+- 100GB bandwidth/month
+- Unlimited deployments
+- Automatic HTTPS
+- Global CDN
+- Free PostgreSQL database (Vercel Postgres)
+
+### Features:
+- ✅ Automatic deployments from GitHub
+- ✅ PostgreSQL database (Vercel Postgres or Neon)
+- ✅ Environment variables management
+- ✅ Custom domains with SSL
+- ✅ Edge network for fast global delivery
 
 ## Project Structure
 
