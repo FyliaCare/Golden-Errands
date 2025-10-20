@@ -65,8 +65,36 @@ Open [http://localhost:3000](http://localhost:3000) to view the app.
 
 ## Deployment
 
-### Vercel (Primary - Recommended)
+### Render (Primary - RECOMMENDED ✅)
+**See [QUICK_START_RENDER.md](./QUICK_START_RENDER.md) for 10-minute deployment**
+
+**Why Render:**
+- ✅ More reliable than Vercel (no random deployment failures)
+- ✅ FREE Forever (750 hours/month + free PostgreSQL)
+- ✅ Zero configuration - auto-detects Next.js
+- ✅ Includes free database (Vercel charges for Postgres)
+- ✅ Better for full-stack Next.js apps
+- ✅ Simple, straightforward deployment
+
+Quick steps:
+1. Sign up: https://render.com/
+2. Create PostgreSQL database (free, 1-click)
+3. Create web service from GitHub
+4. Add environment variables
+5. Deploy! (automatic from GitHub)
+
+**Free tier includes:**
+- 750 hours/month (31 days continuous)
+- Free PostgreSQL database (1GB, renewable)
+- 512MB RAM
+- 100GB bandwidth/month
+- Custom domains with SSL
+- Automatic deployments
+
+### Vercel (Alternative)
 **See [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md) for detailed guide**
+
+**Note:** Vercel works great for static sites but can have issues with full-stack Next.js apps. If Vercel deployment fails, use Render instead.
 
 Quick steps:
 1. Push code to GitHub
@@ -79,11 +107,10 @@ Quick steps:
 - Unlimited deployments
 - Automatic HTTPS
 - Global CDN
-- Free PostgreSQL database (Vercel Postgres)
 
-### Features:
+**Features:**
 - ✅ Automatic deployments from GitHub
-- ✅ PostgreSQL database (Vercel Postgres or Neon)
+- ✅ PostgreSQL database options (Render includes free, Vercel charges)
 - ✅ Environment variables management
 - ✅ Custom domains with SSL
 - ✅ Edge network for fast global delivery

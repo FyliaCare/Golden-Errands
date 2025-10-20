@@ -1,0 +1,37 @@
+# Render Blueprint - Golden Errands
+# This file can be used for Infrastructure as Code deployment on Render
+
+services:
+  # PostgreSQL Database
+  - type: pserv
+    name: golden-errands-db
+    plan: free
+    databaseName: golden_errands
+    databaseUser: golden_errands_user
+    region: oregon
+    ipAllowList: []
+
+  # Web Service (Next.js App)
+  - type: web
+    name: golden-errands
+    runtime: node
+    region: oregon
+    plan: free
+    branch: main
+    rootDir: golden-errands-nextjs
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: golden-errands-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: NEXT_PUBLIC_API_URL
+        sync: false
