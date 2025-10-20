@@ -131,31 +131,134 @@ export default function ServicesPage() {
 
   return (
     <PublicLayout>
+      <style jsx>{`
+        .services-hero {
+          background: linear-gradient(135deg, #E63946 0%, #C1121F 100%);
+          padding: 40px 16px;
+          text-align: center;
+          color: white;
+        }
+        
+        .services-hero-title {
+          color: white !important;
+          font-size: 32px !important;
+          margin-bottom: 12px !important;
+        }
+        
+        .services-hero-subtitle {
+          font-size: 16px !important;
+          color: white !important;
+        }
+        
+        .services-section {
+          padding: 40px 16px;
+          background: white;
+        }
+        
+        .service-icon-wrapper {
+          width: 56px;
+          height: 56px;
+          margin-bottom: 12px;
+        }
+        
+        .service-icon {
+          font-size: 28px !important;
+        }
+        
+        .service-card-title {
+          font-size: 20px !important;
+          margin-bottom: 8px !important;
+        }
+        
+        .service-card-description {
+          font-size: 14px !important;
+          margin-bottom: 16px !important;
+        }
+        
+        .service-feature-text {
+          font-size: 13px !important;
+        }
+        
+        @media (min-width: 768px) {
+          .services-hero {
+            padding: 60px 20px;
+          }
+          
+          .services-hero-title {
+            font-size: 42px !important;
+            margin-bottom: 16px !important;
+          }
+          
+          .services-hero-subtitle {
+            font-size: 18px !important;
+          }
+          
+          .services-section {
+            padding: 60px 20px;
+          }
+          
+          .service-icon-wrapper {
+            width: 70px;
+            height: 70px;
+            margin-bottom: 16px;
+          }
+          
+          .service-icon {
+            font-size: 36px !important;
+          }
+          
+          .service-card-title {
+            font-size: 24px !important;
+            margin-bottom: 12px !important;
+          }
+          
+          .service-card-description {
+            font-size: 16px !important;
+            margin-bottom: 20px !important;
+          }
+          
+          .service-feature-text {
+            font-size: 14px !important;
+          }
+        }
+        
+        @media (min-width: 1024px) {
+          .services-hero {
+            padding: 80px 20px;
+          }
+          
+          .services-hero-title {
+            font-size: 48px !important;
+          }
+          
+          .services-hero-subtitle {
+            font-size: 20px !important;
+          }
+          
+          .services-section {
+            padding: 80px 20px;
+          }
+        }
+      `}</style>
+      
       {/* Hero Section */}
-      <section
-        style={{
-          background: 'linear-gradient(135deg, #E63946 0%, #C1121F 100%)',
-          padding: '80px 20px',
-          textAlign: 'center',
-          color: 'white',
-        }}
-      >
+      <section className="services-hero">
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <Title level={1} style={{ color: 'white', fontSize: 48, marginBottom: 16 }}>
+          <Title level={1} className="services-hero-title">
             Our Services
           </Title>
-          <Paragraph style={{ fontSize: 20, color: 'white', maxWidth: 700, margin: '0 auto' }}>
+          <Paragraph className="services-hero-subtitle" style={{ maxWidth: 700, margin: '0 auto' }}>
             Comprehensive delivery solutions for all your needs
           </Paragraph>
         </div>
       </section>
 
       {/* Services Grid */}
-      <section style={{ padding: '80px 20px', background: 'white' }}>
+      <section className="services-section">
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <Row gutter={[24, 24]}>
+          <Row gutter={[16, 16]}>
             {services.map((service, index) => (
-              <Col xs={24} md={12} key={index}>
+              <Col xs={24} sm={24} md={12} key={index}>
                 <Card
                   hoverable
                   bordered={false}
@@ -166,25 +269,24 @@ export default function ServicesPage() {
                   }}
                 >
                   <div
+                    className="service-icon-wrapper"
                     style={{
-                      width: 70,
-                      height: 70,
                       borderRadius: '50%',
                       background: `${service.color}15`,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      marginBottom: 16,
                     }}
                   >
                     {React.cloneElement(service.icon, {
-                      style: { fontSize: 36, color: service.color },
+                      className: 'service-icon',
+                      style: { color: service.color },
                     })}
                   </div>
-                  <Title level={3} style={{ color: '#1a1a1a', marginBottom: 12 }}>
+                  <Title level={3} className="service-card-title" style={{ color: '#1a1a1a' }}>
                     {service.title}
                   </Title>
-                  <Paragraph style={{ color: '#666', fontSize: 16, marginBottom: 20 }}>
+                  <Paragraph className="service-card-description" style={{ color: '#666' }}>
                     {service.description}
                   </Paragraph>
                   <List
@@ -192,9 +294,9 @@ export default function ServicesPage() {
                     dataSource={service.features}
                     renderItem={(item) => (
                       <List.Item style={{ border: 'none', padding: '4px 0' }}>
-                        <Space>
-                          <CheckCircleOutlined style={{ color: service.color }} />
-                          <Text style={{ color: '#666' }}>{item}</Text>
+                        <Space size="small">
+                          <CheckCircleOutlined style={{ color: service.color, fontSize: 14 }} />
+                          <Text className="service-feature-text" style={{ color: '#666' }}>{item}</Text>
                         </Space>
                       </List.Item>
                     )}

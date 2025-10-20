@@ -36,105 +36,185 @@ export default function PublicHeader() {
   ];
 
   return (
-    <header
-      style={{
-        background: 'white',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-        position: 'sticky',
-        top: 0,
-        zIndex: 1000,
-      }}
-    >
-      <div
+    <>
+      <style jsx>{`
+        .header-container {
+          max-width: 1400px;
+          margin: 0 auto;
+          padding: 0 16px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          height: 64px;
+        }
+        
+        .logo-container {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          flex-shrink: 0;
+        }
+        
+        .logo-icon {
+          font-size: 24px;
+          color: #E63946;
+        }
+        
+        .logo-text-container {
+          display: flex;
+          flex-direction: column;
+        }
+        
+        .logo-title {
+          font-size: 16px;
+          font-weight: bold;
+          color: #E63946;
+          line-height: 1.2;
+          white-space: nowrap;
+        }
+        
+        .logo-tagline {
+          font-size: 9px;
+          color: #FFB703;
+          font-weight: 500;
+          white-space: nowrap;
+        }
+        
+        .desktop-menu {
+          display: none;
+        }
+        
+        .desktop-actions {
+          display: none;
+        }
+        
+        .mobile-menu-btn {
+          display: flex !important;
+          align-items: center;
+          justify-content: center;
+          padding: 8px;
+        }
+        
+        @media (min-width: 1024px) {
+          .header-container {
+            padding: 0 20px;
+            height: 70px;
+          }
+          
+          .logo-icon {
+            font-size: 32px;
+          }
+          
+          .logo-title {
+            font-size: 20px;
+          }
+          
+          .logo-tagline {
+            font-size: 11px;
+          }
+          
+          .desktop-menu {
+            display: block;
+          }
+          
+          .desktop-actions {
+            display: flex !important;
+          }
+          
+          .mobile-menu-btn {
+            display: none !important;
+          }
+        }
+      `}</style>
+      
+      <header
         style={{
-          maxWidth: 1400,
-          margin: '0 auto',
-          padding: '0 20px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          height: 70,
+          background: 'white',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+          position: 'sticky',
+          top: 0,
+          zIndex: 1000,
         }}
       >
-        {/* Logo */}
-        <Link href="/" style={{ textDecoration: 'none' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <RocketOutlined style={{ fontSize: 32, color: '#E63946' }} />
-            <div>
-              <div style={{ fontSize: 20, fontWeight: 'bold', color: '#E63946', lineHeight: 1 }}>
-                GOLDEN ERRANDS
-              </div>
-              <div style={{ fontSize: 11, color: '#FFB703', fontWeight: 500 }}>
-                We Deliver with Passion!
+        <div className="header-container">
+          {/* Logo */}
+          <Link href="/" style={{ textDecoration: 'none' }}>
+            <div className="logo-container">
+              <RocketOutlined className="logo-icon" />
+              <div className="logo-text-container">
+                <div className="logo-title">GOLDEN ERRANDS</div>
+                <div className="logo-tagline">We Deliver with Passion!</div>
               </div>
             </div>
-          </div>
-        </Link>
+          </Link>
 
-        {/* Desktop Menu */}
-        <div className="desktop-menu">
+          {/* Desktop Menu */}
+          <div className="desktop-menu">
+            <Menu
+              mode="horizontal"
+              selectedKeys={[pathname]}
+              style={{ border: 'none', minWidth: 700 }}
+              items={menuItems.map(item => ({
+                key: item.key,
+                label: <Link href={item.key}>{item.label}</Link>,
+                icon: item.icon,
+              }))}
+            />
+          </div>
+
+          {/* Desktop Actions */}
+          <Space className="desktop-actions" size="middle">
+            <InstallPWA />
+            <Link href="/login">
+              <Button type="primary" icon={<LoginOutlined />} size="large" danger>
+                Login
+              </Button>
+            </Link>
+          </Space>
+
+          {/* Mobile Menu Button */}
+          <Button
+            type="text"
+            className="mobile-menu-btn"
+            icon={<MenuOutlined style={{ fontSize: 24, color: '#E63946' }} />}
+            onClick={() => setDrawerVisible(true)}
+          />
+        </div>
+
+        {/* Mobile Drawer */}
+        <Drawer
+          title={
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <RocketOutlined style={{ fontSize: 24, color: '#E63946' }} />
+              <span style={{ color: '#E63946', fontWeight: 'bold' }}>GOLDEN ERRANDS</span>
+            </div>
+          }
+          placement="right"
+          onClose={() => setDrawerVisible(false)}
+          open={drawerVisible}
+          width={280}
+        >
           <Menu
-            mode="horizontal"
+            mode="vertical"
             selectedKeys={[pathname]}
-            style={{ border: 'none', minWidth: 700 }}
+            onClick={() => setDrawerVisible(false)}
+            style={{ border: 'none' }}
             items={menuItems.map(item => ({
               key: item.key,
               label: <Link href={item.key}>{item.label}</Link>,
               icon: item.icon,
             }))}
           />
-        </div>
-
-        {/* Desktop Actions */}
-        <Space className="desktop-actions">
-          <InstallPWA />
-          <Link href="/login">
-            <Button type="primary" icon={<LoginOutlined />} size="large" danger>
-              Login
-            </Button>
-          </Link>
-        </Space>
-
-        {/* Mobile Menu Button */}
-        <Button
-          type="text"
-          className="mobile-menu-btn"
-          icon={<MenuOutlined style={{ fontSize: 24 }} />}
-          onClick={() => setDrawerVisible(true)}
-        />
-      </div>
-
-      {/* Mobile Drawer */}
-      <Drawer
-        title={
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <RocketOutlined style={{ fontSize: 24, color: '#E63946' }} />
-            <span style={{ color: '#E63946' }}>GOLDEN ERRANDS</span>
+          <div style={{ marginTop: 20, padding: '0 16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <InstallPWA />
+            <Link href="/login">
+              <Button type="primary" icon={<LoginOutlined />} block size="large" danger>
+                Login
+              </Button>
+            </Link>
           </div>
-        }
-        placement="right"
-        onClose={() => setDrawerVisible(false)}
-        open={drawerVisible}
-      >
-        <Menu
-          mode="vertical"
-          selectedKeys={[pathname]}
-          onClick={() => setDrawerVisible(false)}
-          items={menuItems.map(item => ({
-            key: item.key,
-            label: <Link href={item.key}>{item.label}</Link>,
-            icon: item.icon,
-          }))}
-        />
-        <div style={{ marginTop: 20, padding: '0 16px' }}>
-          <InstallPWA />
-          <Link href="/login" style={{ marginTop: 12, display: 'block' }}>
-            <Button type="primary" icon={<LoginOutlined />} block size="large" danger>
-              Login
-            </Button>
-          </Link>
-        </div>
-      </Drawer>
-    </header>
+        </Drawer>
+      </header>
+    </>
   );
 }
