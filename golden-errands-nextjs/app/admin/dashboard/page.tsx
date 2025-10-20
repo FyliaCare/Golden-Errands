@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Layout, Menu, Card, Row, Col, Statistic, Table, Tag, Button, Space, Typography } from 'antd';
+import { Layout, Menu, Card, Row, Col, Statistic, Table, Tag, Button, Space, Typography, Drawer } from 'antd';
 import {
   DashboardOutlined,
   UserOutlined,
@@ -15,6 +15,7 @@ import {
   CheckCircleOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
+  MenuOutlined,
 } from '@ant-design/icons';
 
 const { Header, Sider, Content } = Layout;
@@ -23,6 +24,9 @@ const { Title, Text } = Typography;
 export default function AdminDashboard() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  
   const [stats, setStats] = useState({
     totalOrders: 0,
     activeOrders: 0,
@@ -34,9 +38,18 @@ export default function AdminDashboard() {
     pendingDrivers: 0,
   });
 
+  const [recentOrders, setRecentOrders] = useState<any[]>([]);
+  const [pendingDrivers, setPendingDrivers] = useState<any[]>([]);
+
   useEffect(() => {
-    // TODO: Fetch real data from API
-    setLoading(false);
+    // Check screen size
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
     // Mock data
     setStats({
       totalOrders: 1234,
@@ -48,216 +61,320 @@ export default function AdminDashboard() {
       todayRevenue: 15420,
       pendingDrivers: 12,
     });
+
+    setRecentOrders([
+      { key: '1', orderId: 'GE-2025-001234', customer: 'John Doe', driver: 'Kwame A.', status: 'IN_TRANSIT', amount: 'GH₵25' },
+      { key: '2', orderId: 'GE-2025-001235', customer: 'Jane Smith', driver: 'Ama B.', status: 'PICKED_UP', amount: 'GH₵15' },
+      { key: '3', orderId: 'GE-2025-001236', customer: 'Bob Wilson', driver: 'Kofi C.', status: 'PENDING', amount: 'GH₵30' },
+    ]);
+
+    setPendingDrivers([
+      { key: '1', name: 'Kwadwo Mensah', phone: '0244123456', vehicle: 'Motorcycle', appliedDate: '2025-01-18' },
+      { key: '2', name: 'Abena Osei', phone: '0201234567', vehicle: 'Motorcycle', appliedDate: '2025-01-17' },
+    ]);
+
+    setLoading(false);
+    
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
-
-  const menuItems = [
-    { key: '/admin/dashboard', icon: <DashboardOutlined />, label: 'Dashboard' },
-    { key: '/admin/orders', icon: <ShoppingOutlined />, label: 'Orders' },
-    { key: '/admin/drivers', icon: <CarOutlined />, label: 'Drivers' },
-    { key: '/admin/clients', icon: <TeamOutlined />, label: 'Clients' },
-    { key: '/admin/payments', icon: <DollarOutlined />, label: 'Payments' },
-    { key: '/admin/users', icon: <UserOutlined />, label: 'Users' },
-    { key: '/admin/settings', icon: <SettingOutlined />, label: 'Settings' },
-  ];
-
-  const recentOrders = [
-    { key: '1', orderId: 'GE-2025-001234', customer: 'John Doe', driver: 'Kwame A.', status: 'IN_TRANSIT', amount: 'GH₵25' },
-    { key: '2', orderId: 'GE-2025-001235', customer: 'Jane Smith', driver: 'Ama B.', status: 'PICKED_UP', amount: 'GH₵15' },
-    { key: '3', orderId: 'GE-2025-001236', customer: 'Bob Wilson', driver: 'Kofi C.', status: 'PENDING', amount: 'GH₵30' },
-  ];
-
-  const pendingDrivers = [
-    { key: '1', name: 'Yaw Mensah', phone: '0241234567', vehicleType: 'Motorcycle', appliedDate: '2025-10-18' },
-    { key: '2', name: 'Akua Owusu', phone: '0242345678', vehicleType: 'Bicycle', appliedDate: '2025-10-19' },
-  ];
 
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
     router.push('/login');
   };
 
+  const menuItems = [
+    { key: '1', icon: <DashboardOutlined />, label: 'Dashboard' },
+    { key: '2', icon: <ShoppingOutlined />, label: 'Orders' },
+    { key: '3', icon: <CarOutlined />, label: 'Drivers' },
+    { key: '4', icon: <TeamOutlined />, label: 'Clients' },
+    { key: '5', icon: <DollarOutlined />, label: 'Payments' },
+    { key: '6', icon: <UserOutlined />, label: 'Users' },
+    { key: '7', icon: <SettingOutlined />, label: 'Settings' },
+  ];
+
+  const handleMenuClick = (e: any) => {
+    const routes: any = {
+      '2': '/admin/orders',
+      '3': '/admin/drivers',
+      '4': '/admin/clients',
+      '5': '/admin/payments',
+      '6': '/admin/users',
+      '7': '/admin/settings',
+    };
+    
+    if (routes[e.key]) {
+      router.push(routes[e.key]);
+    }
+    
+    // Close mobile menu after navigation
+    if (isMobile) {
+      setMobileMenuOpen(false);
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    const colors: any = {
+      'IN_TRANSIT': 'processing',
+      'PICKED_UP': 'cyan',
+      'PENDING': 'warning',
+      'DELIVERED': 'success',
+      'CANCELLED': 'error',
+    };
+    return colors[status] || 'default';
+  };
+
+  // Table columns with responsive config
+  const orderColumns = [
+    { 
+      title: 'Order ID', 
+      dataIndex: 'orderId', 
+      key: 'orderId',
+      responsive: ['sm'] as any,
+    },
+    { 
+      title: 'Customer', 
+      dataIndex: 'customer', 
+      key: 'customer',
+    },
+    { 
+      title: 'Driver', 
+      dataIndex: 'driver', 
+      key: 'driver',
+      responsive: ['md'] as any,
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status: string) => (
+        <Tag color={getStatusColor(status)}>{status.replace('_', ' ')}</Tag>
+      ),
+    },
+    { 
+      title: 'Amount', 
+      dataIndex: 'amount', 
+      key: 'amount',
+    },
+  ];
+
+  const driverColumns = [
+    { 
+      title: 'Name', 
+      dataIndex: 'name', 
+      key: 'name',
+    },
+    { 
+      title: 'Phone', 
+      dataIndex: 'phone', 
+      key: 'phone',
+      responsive: ['sm'] as any,
+    },
+    { 
+      title: 'Vehicle', 
+      dataIndex: 'vehicle', 
+      key: 'vehicle',
+      responsive: ['md'] as any,
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: () => (
+        <Space size="small">
+          <Button type="primary" size="small" style={{ background: '#06d6a0' }}>
+            Approve
+          </Button>
+          <Button danger size="small">
+            Reject
+          </Button>
+        </Space>
+      ),
+    },
+  ];
+
+  const SidebarMenu = () => (
+    <Menu
+      mode="inline"
+      defaultSelectedKeys={['1']}
+      style={{ height: '100%', borderRight: 0 }}
+      onClick={handleMenuClick}
+      items={menuItems}
+    />
+  );
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider width={250} style={{ background: '#fff' }}>
-        <div style={{ padding: '20px', textAlign: 'center', borderBottom: '1px solid #f0f0f0' }}>
-          <Title level={4} style={{ color: '#E63946', margin: 0 }}>
-            Admin Panel
-          </Title>
-          <Text type="secondary" style={{ fontSize: 12 }}>System Administrator</Text>
-        </div>
-        <Menu
-          mode="inline"
-          defaultSelectedKeys={['/admin/dashboard']}
-          items={menuItems}
-          onClick={({ key }) => router.push(key)}
-          style={{ borderRight: 0 }}
-        />
-        <div style={{ position: 'absolute', bottom: 20, width: '100%', padding: '0 20px' }}>
-          <Button
-            icon={<LogoutOutlined />}
-            block
-            onClick={handleLogout}
-          >
-            Logout
-          </Button>
-        </div>
-      </Sider>
+      {/* Desktop Sidebar */}
+      {!isMobile && (
+        <Sider
+          width={250}
+          style={{
+            background: '#fff',
+            borderRight: '1px solid #f0f0f0',
+          }}
+        >
+          <div style={{ padding: '24px 16px', borderBottom: '1px solid #f0f0f0' }}>
+            <Title level={4} style={{ margin: 0, color: '#E63946' }}>
+              Admin Panel
+            </Title>
+          </div>
+          <SidebarMenu />
+        </Sider>
+      )}
+
+      {/* Mobile Drawer */}
+      <Drawer
+        title={<Text strong style={{ color: '#E63946' }}>Admin Panel</Text>}
+        placement="left"
+        onClose={() => setMobileMenuOpen(false)}
+        open={mobileMenuOpen}
+        width={280}
+        styles={{ body: { padding: 0 } }}
+      >
+        <SidebarMenu />
+      </Drawer>
 
       <Layout>
-        <Header style={{ background: '#fff', padding: '0 24px', borderBottom: '1px solid #f0f0f0' }}>
-          <Title level={3} style={{ margin: '16px 0' }}>Dashboard Overview</Title>
+        <Header 
+          className="dashboard-header"
+          style={{ 
+            background: '#fff', 
+            borderBottom: '1px solid #f0f0f0',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            {isMobile && (
+              <Button
+                type="text"
+                icon={<MenuOutlined />}
+                onClick={() => setMobileMenuOpen(true)}
+                style={{ fontSize: '20px' }}
+              />
+            )}
+            <Title level={3} style={{ margin: 0 }}>
+              Dashboard
+            </Title>
+          </div>
+          <Space size="small" wrap>
+            <Button icon={<LogoutOutlined />} onClick={handleLogout}>
+              {!isMobile && 'Logout'}
+            </Button>
+          </Space>
         </Header>
 
-        <Content style={{ margin: '24px', minHeight: 280 }}>
+        <Content className="mobile-spacing">
           {/* Stats Cards */}
           <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-            <Col xs={24} sm={12} lg={6}>
+            <Col xs={12} sm={12} md={6}>
               <Card>
                 <Statistic
                   title="Total Orders"
                   value={stats.totalOrders}
-                  prefix={<ShoppingOutlined style={{ color: '#E63946' }} />}
-                  valueStyle={{ color: '#E63946' }}
+                  valueStyle={{ color: '#E63946', fontSize: isMobile ? '20px' : '24px' }}
                 />
               </Card>
             </Col>
-            <Col xs={24} sm={12} lg={6}>
+            <Col xs={12} sm={12} md={6}>
               <Card>
                 <Statistic
                   title="Active Orders"
                   value={stats.activeOrders}
-                  prefix={<ClockCircleOutlined style={{ color: '#FFB703' }} />}
-                  valueStyle={{ color: '#FFB703' }}
+                  prefix={<ClockCircleOutlined />}
+                  valueStyle={{ color: '#FFB703', fontSize: isMobile ? '20px' : '24px' }}
                 />
               </Card>
             </Col>
-            <Col xs={24} sm={12} lg={6}>
+            <Col xs={12} sm={12} md={6}>
               <Card>
                 <Statistic
                   title="Active Drivers"
                   value={`${stats.activeDrivers}/${stats.totalDrivers}`}
-                  prefix={<CarOutlined style={{ color: '#06d6a0' }} />}
-                  valueStyle={{ color: '#06d6a0' }}
+                  prefix={<CarOutlined />}
+                  valueStyle={{ color: '#06d6a0', fontSize: isMobile ? '20px' : '24px' }}
                 />
               </Card>
             </Col>
-            <Col xs={24} sm={12} lg={6}>
+            <Col xs={12} sm={12} md={6}>
               <Card>
                 <Statistic
                   title="Today's Revenue"
                   value={stats.todayRevenue}
                   prefix="GH₵"
-                  valueStyle={{ color: '#8338EC' }}
+                  valueStyle={{ color: '#8338EC', fontSize: isMobile ? '20px' : '24px' }}
                 />
               </Card>
             </Col>
           </Row>
 
+          {/* Additional Stats - Hidden on very small screens */}
           <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-            <Col xs={24} sm={12} lg={6}>
+            <Col xs={12} sm={8}>
               <Card>
                 <Statistic
                   title="Total Clients"
                   value={stats.totalClients}
                   prefix={<TeamOutlined />}
+                  valueStyle={{ fontSize: isMobile ? '18px' : '20px' }}
                 />
               </Card>
             </Col>
-            <Col xs={24} sm={12} lg={6}>
+            <Col xs={12} sm={8}>
               <Card>
                 <Statistic
-                  title="Completed Orders"
+                  title="Completed"
                   value={stats.completedOrders}
-                  prefix={<CheckCircleOutlined style={{ color: '#06d6a0' }} />}
+                  prefix={<CheckCircleOutlined />}
+                  valueStyle={{ color: '#06d6a0', fontSize: isMobile ? '18px' : '20px' }}
                 />
               </Card>
             </Col>
-            <Col xs={24} sm={12} lg={6}>
-              <Card style={{ background: '#FFF3E0', borderLeft: '4px solid #FFB703' }}>
+            <Col xs={24} sm={8}>
+              <Card>
                 <Statistic
                   title="Pending Drivers"
                   value={stats.pendingDrivers}
-                  prefix={<ClockCircleOutlined />}
-                  suffix={
-                    <Button
-                      type="link"
-                      size="small"
-                      onClick={() => router.push('/admin/drivers?tab=pending')}
-                    >
-                      Review
-                    </Button>
-                  }
+                  valueStyle={{ color: '#FFB703', fontSize: isMobile ? '18px' : '20px' }}
                 />
               </Card>
             </Col>
           </Row>
 
           {/* Recent Orders */}
-          <Row gutter={[16, 16]}>
-            <Col xs={24} lg={14}>
-              <Card
-                title="Recent Orders"
-                extra={<Button type="link" onClick={() => router.push('/admin/orders')}>View All</Button>}
-              >
-                <Table
-                  dataSource={recentOrders}
-                  pagination={false}
-                  size="small"
-                  columns={[
-                    { title: 'Order ID', dataIndex: 'orderId', key: 'orderId' },
-                    { title: 'Customer', dataIndex: 'customer', key: 'customer' },
-                    { title: 'Driver', dataIndex: 'driver', key: 'driver' },
-                    {
-                      title: 'Status',
-                      dataIndex: 'status',
-                      key: 'status',
-                      render: (status) => {
-                        const colors: any = {
-                          PENDING: 'orange',
-                          PICKED_UP: 'blue',
-                          IN_TRANSIT: 'cyan',
-                          DELIVERED: 'green',
-                        };
-                        return <Tag color={colors[status]}>{status.replace('_', ' ')}</Tag>;
-                      },
-                    },
-                    { title: 'Amount', dataIndex: 'amount', key: 'amount' },
-                  ]}
-                />
-              </Card>
-            </Col>
+          <Card 
+            title="Recent Orders" 
+            style={{ marginBottom: 24 }}
+            styles={{ 
+              header: { fontSize: isMobile ? '16px' : '18px' }
+            }}
+          >
+            <Table
+              dataSource={recentOrders}
+              columns={orderColumns}
+              pagination={false}
+              scroll={{ x: isMobile ? 800 : undefined }}
+              size={isMobile ? 'small' : 'middle'}
+            />
+          </Card>
 
-            <Col xs={24} lg={10}>
-              <Card
-                title="Pending Driver Applications"
-                extra={<Button type="link" onClick={() => router.push('/admin/drivers')}>View All</Button>}
-              >
-                <Table
-                  dataSource={pendingDrivers}
-                  pagination={false}
-                  size="small"
-                  columns={[
-                    { title: 'Name', dataIndex: 'name', key: 'name' },
-                    { title: 'Vehicle', dataIndex: 'vehicleType', key: 'vehicleType' },
-                    {
-                      title: 'Action',
-                      key: 'action',
-                      render: () => (
-                        <Space>
-                          <Button type="link" size="small" style={{ color: '#06d6a0' }}>
-                            Approve
-                          </Button>
-                          <Button type="link" size="small" danger>
-                            Reject
-                          </Button>
-                        </Space>
-                      ),
-                    },
-                  ]}
-                />
-              </Card>
-            </Col>
-          </Row>
+          {/* Pending Driver Applications */}
+          <Card 
+            title="Pending Driver Applications"
+            styles={{ 
+              header: { fontSize: isMobile ? '16px' : '18px' }
+            }}
+          >
+            <Table
+              dataSource={pendingDrivers}
+              columns={driverColumns}
+              pagination={false}
+              scroll={{ x: isMobile ? 600 : undefined }}
+              size={isMobile ? 'small' : 'middle'}
+            />
+          </Card>
         </Content>
       </Layout>
     </Layout>
