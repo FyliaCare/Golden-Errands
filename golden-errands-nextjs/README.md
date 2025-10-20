@@ -1,38 +1,85 @@
-# Golden Errands - Next.js Full-Stack Delivery Platform
+# Golden Errands - Delivery Platform
 
 A modern, full-stack delivery management platform built with Next.js 15, TypeScript, Prisma, and PostgreSQL.
 
+## Tech Stack
+
+- **Frontend:** Next.js 15 (App Router), React, TypeScript, Ant Design
+- **Backend:** Next.js API Routes
+- **Database:** PostgreSQL (Neon)
+- **ORM:** Prisma
+- **Auth:** JWT (jose)
+- **Deployment:** Railway
+
+## Features
+
+- 🚀 Customer order placement
+- 🚚 Driver management
+- 📦 Order tracking
+- 📄 Document generation (invoices, receipts, quotations)
+- 🔐 JWT authentication
+- 🗺️ Google Maps integration
+
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 18+
+- PostgreSQL database
 
+### Installation
+
+1. Clone the repository
+2. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Set up environment variables (`.env.local`):
+```env
+DATABASE_URL="your-postgresql-connection-string"
+JWT_SECRET="your-jwt-secret"
+JWT_REFRESH_SECRET="your-jwt-refresh-secret"
+NODE_ENV="development"
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+4. Run database migrations:
+```bash
+npx prisma migrate dev
+npx prisma db seed
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+5. Start the development server:
+```bash
+npm run dev
+```
 
-## Learn More
+Open [http://localhost:3000](http://localhost:3000) to view the app.
 
-To learn more about Next.js, take a look at the following resources:
+## Database Schema
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+15 Prisma models including:
+- User, Customer, Driver
+- Order, OrderItem, OrderTracking
+- Payment, Invoice, Receipt, Quotation
+- Vehicle, Route, and more
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
+Deployed on Railway with:
+- Automatic deployments from GitHub
+- PostgreSQL database (Neon)
+- Environment variables configured
+- Build command: `npm run build`
+- Start command: `npm start`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Project Structure
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+golden-errands-nextjs/
+├── app/              # Next.js pages & API routes
+├── components/       # React components
+├── contexts/         # React contexts (Auth, etc.)
+├── lib/              # Utilities & Prisma client
+├── prisma/           # Database schema & migrations
+└── public/           # Static assets
+```

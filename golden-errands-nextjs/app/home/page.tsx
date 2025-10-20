@@ -14,6 +14,7 @@ import {
   CheckCircleOutlined,
   EnvironmentOutlined,
 } from '@ant-design/icons';
+import PublicLayout from '@/components/PublicLayout';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -65,7 +66,8 @@ export default function HomePage() {
   ];
 
   return (
-    <div style={{ overflow: 'hidden' }}>
+    <PublicLayout>
+      <div style={{ overflow: 'hidden' }}>
       {/* Hero Section */}
       <section
         style={{
@@ -282,6 +284,7 @@ export default function HomePage() {
           </Space>
         </div>
       </section>
-    </div>
+      </div>
+    </PublicLayout>
   );
 }
